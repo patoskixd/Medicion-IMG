@@ -1,0 +1,9 @@
+
+*.pack
+node_modules
+
+.angular/cache/18.2.12/angular-webpack/02c74817d99f7962f99d179bd02b7e9a7627ab69/
+
+.angular/cache/18.2.12/babel-webpack/
+
+.vscode/
