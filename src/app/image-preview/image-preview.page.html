@@ -1,0 +1,15 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Vista de Imagen</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="button-container">
+    <ion-button color="secondary" (click)="setMarker('marker1')">Marcar Punto 1</ion-button>
+    <ion-button color="tertiary" (click)="setMarker('marker2')">Marcar Punto 2</ion-button>
+  </div>
+
+  <!-- Contenedor para Konva -->
+  <div #konvaContainer class="canvas-container"></div>
+</ion-content>

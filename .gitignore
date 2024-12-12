@@ -7,3 +7,5 @@ node_modules
 .angular/cache/18.2.12/babel-webpack/
 
 .vscode/
+
+.angular/cache/18.2.12/angular-webpack/2bf155619ae457fb4a5ef631eda542a56457449c/

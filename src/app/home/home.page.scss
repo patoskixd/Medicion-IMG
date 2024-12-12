@@ -19,9 +19,34 @@
   }
 
   .image-preview img {
-    width: 200px;
-    height: 200px;
+    width: 500px;
+    height: 500px;
     object-fit: cover;
     border-radius: 10px;
     border: 2px solid var(--ion-color-secondary);
   }
+  .image-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+  
+    img {
+      max-width: 100%;
+      max-height: 50vh;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+  
+    ion-button {
+      margin-top: 15px;
+      width: 100%;
+    }
+  }
+  
+  
+  .image-upload-container {
+    margin-top: 50px;
+    text-align: center;
+  }
+  

@@ -16,15 +16,18 @@
   <!-- Apartado para Cargar una Imagen -->
   <div class="image-upload-container">
     <p>Selecciona una imagen para personalizar tu experiencia:</p>
-    <ion-button color="secondary" expand="full">
+    <ion-button color="secondary" expand="full" (click)="fileInput.click()">
       <ion-icon slot="start" name="image-outline"></ion-icon>
       Seleccionar Imagen
     </ion-button>
+    <input type="file" #fileInput accept="image/*" (change)="onImageSelected($event)" hidden />
   </div>
   
-  <!-- Imagen Preview (Placeholder) -->
-  <div class="image-preview">
-    <img src="assets/placeholder.png" alt="Vista previa de la imagen" />
+  <!-- Imagen Preview -->
+  <div class="image-preview" *ngIf="selectedImage">
+    <img [src]="selectedImage" alt="Vista previa de la imagen" />
+    <ion-button color="success" expand="full" (click)="confirmImage()">
+      Confirmar Imagen
+    </ion-button>
   </div>
 </ion-content>
-
