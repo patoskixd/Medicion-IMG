@@ -1,18 +1,20 @@
-ion-content {
-    --background: #f7f7f7;
-  
-    .button-container {
-      display: flex;
-      justify-content: center;
-      margin: 16px 0;
-      gap: 10px;
-    }
-  
-    .canvas-container {
-      width: 100%;
-      height: calc(100vh - 120px); // Ajusta altura considerando el header y botones
-      position: relative;
-      background: #e9e9e9;
-    }
-  }
-  
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin: 16px 0;
+  gap: 10px;
+}
+
+.zoom-controls {
+  display: flex;
+  justify-content: center;
+  margin: 1px 0;
+  gap: 10px;
+}
+
+.canvas-container {
+  width: 100%;
+  height: calc(100vh - 200px); /* Ajusta según el tamaño del header y botones */
+  position: relative;
+  background: #e9e9e9;
+}

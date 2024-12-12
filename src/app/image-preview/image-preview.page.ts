@@ -17,6 +17,8 @@ export class ImagePreviewPage {
   private markers: { marker1?: Konva.Circle; marker2?: Konva.Circle } = {};
   private line!: Konva.Line;
   private scaleFactor = 1; // Factor de escala para mantener la calidad
+  private isLocked: boolean = false; // Indica si el zoom y el movimiento están bloqueados
+
 
   ngOnInit() {
     const state = history.state;
@@ -51,7 +53,31 @@ export class ImagePreviewPage {
   }
 
   private addImageToStage() {
+    const container = this.konvaContainer.nativeElement;
+    const scaleX = container.offsetWidth / this.imageObj.width;
+    const scaleY = container.offsetHeight / this.imageObj.height;
+    this.scaleFactor = Math.min(scaleX, scaleY);
+  
+    const imageX = (container.offsetWidth - this.imageObj.width * this.scaleFactor) / 2;
+    const imageY = (container.offsetHeight - this.imageObj.height * this.scaleFactor) / 2;
+  
+    if (!this.konvaImage) {
+      this.konvaImage = new Konva.Image({
+        image: this.imageObj,
+        x: imageX,
+        y: imageY,
+        scaleX: this.scaleFactor,
+        scaleY: this.scaleFactor,
+        draggable: false // Permitir mover la imagen
+      });
+      this.imageLayer.add(this.konvaImage);
+    }
+  
+    this.konvaImage.scale({ x: this.scaleFactor, y: this.scaleFactor });
+    this.konvaImage.position({ x: imageX, y: imageY });
+    this.imageLayer.draw();
     this.resizeStage();
+    
   }
 
   private resizeStage() {
@@ -118,6 +144,7 @@ export class ImagePreviewPage {
   }
 
   setMarker(marker: 'marker1' | 'marker2') {
+    this.isLocked = true;
     this.stage.on('click touchstart', (e) => {
       const pointer = this.stage.getPointerPosition();
       if (!pointer) return;
@@ -201,4 +228,85 @@ export class ImagePreviewPage {
 
     console.log(`Distancia en píxeles: ${distance}`);
   }
+  zoomIn() {
+    if (this.isLocked) {
+      console.log('Zoom bloqueado.');
+      return;
+    }
+    
+    const scaleBy = 1.2; // Factor de aumento
+    const oldScale = this.konvaImage.scaleX();
+    const newScale = oldScale * scaleBy;
+    this.konvaImage.draggable(newScale > 1);
+  
+    this.konvaImage.scale({ x: newScale, y: newScale });
+    this.centerImageOnZoom(newScale, oldScale);
+    this.konvaImage.draggable(true);
+  }
+  
+  zoomOut() {
+    if (this.isLocked) {
+      console.log('Zoom bloqueado.');
+      return;
+    }
+    const scaleBy = 0.8; // Factor de reducción
+    const oldScale = this.konvaImage.scaleX();
+    const newScale = oldScale * scaleBy;
+  
+    this.konvaImage.scale({ x: newScale, y: newScale });
+    this.centerImageOnZoom(newScale, oldScale);
+    this.konvaImage.draggable(true);
+  }
+  
+  private centerImageOnZoom(newScale: number, oldScale: number) {
+    const container = this.konvaContainer.nativeElement;
+    const stageWidth = container.offsetWidth;
+    const stageHeight = container.offsetHeight;
+  
+    const imageWidth = this.imageObj.width * newScale;
+    const imageHeight = this.imageObj.height * newScale;
+  
+    // Ajustar posición para centrar la imagen
+    const newPosX = Math.max(
+      Math.min(this.konvaImage.x(), (stageWidth - imageWidth) / 2),
+      0
+    );
+    const newPosY = Math.max(
+      Math.min(this.konvaImage.y(), (stageHeight - imageHeight) / 2),
+      0
+    );
+  
+    this.konvaImage.position({ x: newPosX, y: newPosY });
+    this.imageLayer.draw();
+  }
+  
+  resetMarkers() {
+
+    // Eliminar marcadores existentes
+    Object.values(this.markers).forEach((marker) => {
+      if (marker) {
+        marker.destroy();
+      }
+    });
+  
+    // Eliminar la línea si existe
+    if (this.line) {
+      this.line.destroy(); // Asignar null en lugar de undefined
+    }
+  
+    // Limpiar referencias
+    this.markers = {};
+
+    // Habilitar zoom y movimiento
+    this.isLocked = false; // Desbloquear controles
+    this.konvaImage.draggable(false); // Permitir mover la imagen
+  
+    // Redibujar la capa
+    this.markerLayer.draw();
+    console.log('Marcadores restablecidos.');
+  }
+  
+  
+  
+  
 }
