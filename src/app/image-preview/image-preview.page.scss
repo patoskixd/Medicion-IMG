@@ -1,20 +1,14 @@
-.button-container {
-  display: flex;
-  justify-content: center;
-  margin: 16px 0;
-  gap: 10px;
-}
+ion-content {
+  --background: #f7f7f7;
 
-.zoom-controls {
-  display: flex;
-  justify-content: center;
-  margin: 1px 0;
-  gap: 10px;
-}
+  .button-container {
+    display: flex;
+    justify-content: center;
+    margin: 16px 0;
+    gap: 10px;
+  }
 
-.canvas-container {
-  width: 100%;
-  height: calc(100vh - 200px); /* Ajusta según el tamaño del header y botones */
-  position: relative;
-  background: #e9e9e9;
+  .canvas-container {
+    height: calc(100vh - 300px); /* Ajustar altura para botones más grandes en pantallas pequeñas */
+  }
 }

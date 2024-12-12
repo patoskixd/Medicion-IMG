@@ -1,6 +1,9 @@
 import { Component, ElementRef, ViewChild, HostListener } from '@angular/core';
 import Konva from 'konva';
 
+import { ToastController } from '@ionic/angular';
+
+
 @Component({
   selector: 'app-image-preview',
   templateUrl: './image-preview.page.html',
@@ -19,6 +22,20 @@ export class ImagePreviewPage {
   private scaleFactor = 1; // Factor de escala para mantener la calidad
   private isLocked: boolean = false; // Indica si el zoom y el movimiento están bloqueados
 
+  constructor(private toastController: ToastController) {}
+
+
+  private async showToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000, // Duración en milisegundos
+      position: 'top', // Posición: 'top', 'middle', o 'bottom'
+      color: 'danger', // Color de la notificación
+    });
+  
+    await toast.present();
+  }
+  
 
   ngOnInit() {
     const state = history.state;
@@ -145,7 +162,8 @@ export class ImagePreviewPage {
 
   setMarker(marker: 'marker1' | 'marker2') {
     this.isLocked = true;
-    this.stage.on('click touchstart', (e) => {
+    this.konvaImage.draggable(false);
+    this.stage.on('click touchstart', async (e) => {
       const pointer = this.stage.getPointerPosition();
       if (!pointer) return;
 
@@ -164,6 +182,7 @@ export class ImagePreviewPage {
         console.log(`Marcador ${marker} colocado en: x=${imageCoords.x}, y=${imageCoords.y}`);
       } else {
         console.log('El clic está fuera de los límites de la imagen.');
+        await this.showToast('El marcador está fuera de los límites de la imagen.'); // Notificacion para q se ponga vio
       }
 
       this.stage.off('click touchstart');
@@ -228,9 +247,10 @@ export class ImagePreviewPage {
 
     console.log(`Distancia en píxeles: ${distance}`);
   }
-  zoomIn() {
+  async zoomIn() {
     if (this.isLocked) {
       console.log('Zoom bloqueado.');
+      await this.showToast('Zoom bloqueado, restablecer marcadores para aplicarlo.'); // Notificacion para q se ponga vio
       return;
     }
     
@@ -244,9 +264,10 @@ export class ImagePreviewPage {
     this.konvaImage.draggable(true);
   }
   
-  zoomOut() {
+  async zoomOut() {
     if (this.isLocked) {
       console.log('Zoom bloqueado.');
+      await this.showToast('Zoom bloqueado, restablecer marcadores para aplicarlo.'); // Notificacion para q se ponga vio
       return;
     }
     const scaleBy = 0.8; // Factor de reducción
