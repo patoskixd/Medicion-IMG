@@ -1,5 +1,7 @@
 import { Component, ElementRef, ViewChild, HostListener } from '@angular/core';
 import Konva from 'konva';
+import { ModalController } from '@ionic/angular';
+import { CalibrationFormComponent } from './calibration-form/calibration-form.component';
 
 import { ToastController } from '@ionic/angular';
 
@@ -21,8 +23,93 @@ export class ImagePreviewPage {
   private line!: Konva.Line;
   private scaleFactor = 1; // Factor de escala para mantener la calidad
   private isLocked: boolean = false; // Indica si el zoom y el movimiento están bloqueados
+  public imageSize: { width: number; height: number } = { width: 0, height: 0 };
+  public measuredDistance: number | null = null;
+  public calibrationDialogVisible = false; // Controla si la pestaña de calibración está visible
+  public knownDistance: number | null = null; // Distancia conocida ingresada por el usuario
+  public unitOfMeasurement: string = ''; // Unidad de medida seleccionada
+  public scale: number | null = null; // Escala calculada
+  public useMagnification = false; // Controla si se usa selección de ampliación
+  public magnificationOptions = [4, 10, 40, 100]; // Opciones de ampliación
+  public selectedMagnification: number | null = null; // Ampliación seleccionada
+  public unitsPerPixel: number | null = null; // Factor de conversión entre píxeles y unidades reales
+  
 
-  constructor(private toastController: ToastController) {}
+
+  constructor(private toastController: ToastController, private modalController: ModalController) {}
+
+  async openCalibrationDialog() {
+    if (this.markers.marker1 && this.markers.marker2) {
+      let convertedDistance: number | null = null;
+  
+      // Calcular la distancia conocida si la calibración ya está configurada
+      if (this.unitsPerPixel && this.measuredDistance) {
+        convertedDistance = this.measuredDistance * this.unitsPerPixel;
+      }
+  
+      const modal = await this.modalController.create({
+        component: CalibrationFormComponent,
+        componentProps: {
+          measuredDistance: this.measuredDistance,
+          knownDistance: convertedDistance, // Pasar la distancia conocida convertida
+          unitOfMeasurement: this.unitOfMeasurement, // Pasar la unidad guardada
+        },
+      });
+  
+      modal.onDidDismiss().then((result) => {
+        if (result.data) {
+          const { scale, unit } = result.data;
+  
+          // Guardar escala y unidad
+          this.unitsPerPixel = scale;
+          this.unitOfMeasurement = unit;
+  
+          // Almacenar en localStorage
+          if (this.unitsPerPixel !== null) {
+            localStorage.setItem('unitsPerPixel', this.unitsPerPixel.toString());
+          }
+          if (this.unitOfMeasurement) {
+            localStorage.setItem('unitOfMeasurement', this.unitOfMeasurement);
+          }
+  
+          console.log(`Escala guardada: ${this.unitsPerPixel} ${this.unitOfMeasurement}/píxel.`);
+        }
+      });
+  
+      await modal.present();
+    } else {
+      this.showToast('Por favor, coloque dos marcadores antes de calibrar.');
+    }
+  }
+  
+  
+  saveCalibration() {
+    if (this.useMagnification && this.selectedMagnification) {
+      // Usar la magnificación seleccionada
+      this.unitsPerPixel = this.selectedMagnification / this.measuredDistance!;
+      this.unitOfMeasurement = 'µm'; // Unidad típica para microscopios
+    } else if (this.knownDistance && this.unitOfMeasurement) {
+      // Usar la distancia y unidad de medida ingresadas
+      this.unitsPerPixel = this.knownDistance / this.measuredDistance!;
+    } else {
+      this.showToast('Complete todos los campos antes de guardar la calibración.');
+      return;
+    }
+  
+    // Guardar los valores en localStorage
+    if (this.unitsPerPixel && this.unitOfMeasurement) {
+      localStorage.setItem('unitsPerPixel', this.unitsPerPixel.toString());
+      localStorage.setItem('unitOfMeasurement', this.unitOfMeasurement);
+      console.log(`Calibración guardada: ${this.unitsPerPixel} ${this.unitOfMeasurement}/píxel.`);
+    } else {
+      console.log('No se pudo guardar la calibración. Valores inválidos.');
+    }
+  
+    this.calibrationDialogVisible = false; // Cerrar el diálogo
+  }
+  
+  
+  
 
 
   private async showToast(message: string) {
@@ -36,8 +123,19 @@ export class ImagePreviewPage {
     await toast.present();
   }
   
-
   ngOnInit() {
+    // Eliminar cualquier escala almacenada previamente
+    localStorage.removeItem('unitsPerPixel');
+    localStorage.removeItem('unitOfMeasurement');
+  
+    // Reiniciar variables relacionadas con la calibración
+    this.unitsPerPixel = null;
+    this.unitOfMeasurement = 'µm';
+    this.knownDistance = null;
+  
+    console.log('Calibración eliminada. Debes realizar una nueva escala.');
+  
+    // Cargar la imagen desde el estado del historial
     const state = history.state;
     if (state.image) {
       this.imageObj.src = state.image;
@@ -47,7 +145,9 @@ export class ImagePreviewPage {
       };
     }
   }
-
+  
+  
+  
   @HostListener('window:resize')
   onResize() {
     this.resizeStage();
@@ -68,13 +168,15 @@ export class ImagePreviewPage {
     this.stage.add(this.imageLayer);
     this.stage.add(this.markerLayer);
   }
-
+//Configuracion de la imagenes
   private addImageToStage() {
     const container = this.konvaContainer.nativeElement;
     const scaleX = container.offsetWidth / this.imageObj.width;
     const scaleY = container.offsetHeight / this.imageObj.height;
     this.scaleFactor = Math.min(scaleX, scaleY);
   
+    this.imageSize = { width: this.imageObj.width, height: this.imageObj.height }; // Asignar tamaño de la imagen
+
     const imageX = (container.offsetWidth - this.imageObj.width * this.scaleFactor) / 2;
     const imageY = (container.offsetHeight - this.imageObj.height * this.scaleFactor) / 2;
   
@@ -236,17 +338,29 @@ export class ImagePreviewPage {
     this.markerLayer.add(this.line);
     this.markerLayer.draw();
   }
+// Calcula la distancia en px
+private calculateDistance() {
+  const marker1 = this.markers.marker1!;
+  const marker2 = this.markers.marker2!;
 
-  private calculateDistance() {
-    const marker1 = this.markers.marker1!;
-    const marker2 = this.markers.marker2!;
+  const dx = (marker2.x() - marker1.x()) / this.konvaImage.scaleX();
+  const dy = (marker2.y() - marker1.y()) / this.konvaImage.scaleY();
+  const distanceInPixels = Math.sqrt(dx * dx + dy * dy);
 
-    const dx = (marker2.x() - marker1.x()) / this.konvaImage.scaleX();
-    const dy = (marker2.y() - marker1.y()) / this.konvaImage.scaleY();
-    const distance = Math.sqrt(dx * dx + dy * dy);
+  this.measuredDistance = distanceInPixels; // Almacenar distancia en píxeles
 
-    console.log(`Distancia en píxeles: ${distance}`);
+  if (this.unitsPerPixel !==null) {
+    const distanceInUnits = distanceInPixels * this.unitsPerPixel;
+    console.log(`Distancia medida: ${distanceInPixels.toFixed(2)} píxeles.`);
+    console.log(`Distancia convertida: ${distanceInUnits.toFixed(2)} ${this.unitOfMeasurement}.`);
+  } else {
+    console.log(`Distancia medida: ${distanceInPixels.toFixed(2)} píxeles.`);
+    console.log(`Calibración no establecida.`);
   }
+}
+
+
+  //Botones de zoom
   async zoomIn() {
     if (this.isLocked) {
       console.log('Zoom bloqueado.');
@@ -300,7 +414,8 @@ export class ImagePreviewPage {
     this.konvaImage.position({ x: newPosX, y: newPosY });
     this.imageLayer.draw();
   }
-  
+
+  //Reset de los marcadores
   resetMarkers() {
 
     // Eliminar marcadores existentes

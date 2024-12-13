@@ -19,7 +19,6 @@ export class HomePage {
 
       reader.onload = () => {
         this.selectedImage = reader.result as string; // Aquí ya tienes el base64
-        console.log('Imagen en base64:', this.selectedImage);
       };
 
       reader.readAsDataURL(file); // Convierte la imagen en base64 automáticamente
@@ -27,7 +26,6 @@ export class HomePage {
   }
 
   confirmImage(): void {
-    console.log('Confirmar imagen:', this.selectedImage);
     if (this.selectedImage) {
       this.router.navigate(['/image-preview'], { state: { image: this.selectedImage } });
     } else {

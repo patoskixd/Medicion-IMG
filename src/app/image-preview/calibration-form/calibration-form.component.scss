@@ -1,0 +1,62 @@
+.calibration-container {
+    padding: 16px;
+  
+    .header-title {
+      font-size: 1.4em;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 8px;
+      color: var(--ion-color-primary);
+    }
+  
+    .measured-distance {
+      font-size: 1em;
+      text-align: center;
+      margin-bottom: 16px;
+      color: var(--ion-color-medium);
+    }
+  
+    .toggle-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+  
+    .magnification-container,
+    .manual-input-container {
+      ion-item {
+        margin-bottom: 8px;
+  
+        ion-label {
+          font-size: 0.9em;
+          color: var(--ion-color-dark);
+        }
+  
+        ion-input {
+          font-size: 1em;
+        }
+  
+        ion-select {
+          font-size: 1em;
+        }
+      }
+    }
+  
+    .calibration-actions {
+      margin-top: 16px;
+  
+      ion-button {
+        font-size: 1em;
+        margin: 8px 0;
+      }
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .calibration-container {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+  }
+  

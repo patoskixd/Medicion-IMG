@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Calibración</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="calibration-container">
+    <h3 class="header-title">Configuración de Escala</h3>
+    <p class="measured-distance">Distancia medida: {{ measuredDistance }} píxeles</p>
+
+    <!-- Checkbox -->
+    <ion-item lines="none" class="toggle-item">
+      <ion-label>Usar ampliación</ion-label>
+      <ion-checkbox [(ngModel)]="useMagnification" color="secondary"></ion-checkbox>
+    </ion-item>
+
+    <!-- Ampliación: visible solo si el checkbox está activo -->
+    <div *ngIf="useMagnification" class="magnification-container">
+      <ion-item lines="inset">
+        <ion-label position="stacked">Ampliación</ion-label>
+        <ion-select
+          [(ngModel)]="selectedMagnification"
+          (ionChange)="onMagnificationChange()"
+          interface="popover">
+          <ion-select-option *ngFor="let mag of magnificationOptions" [value]="mag">
+            {{ mag }}x
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+    </div>
+
+    <!-- Distancia conocida y Unidad -->
+    <div class="manual-input-container">
+      <ion-item lines="inset">
+        <ion-label position="stacked">Distancia conocida</ion-label>
+        <ion-input
+          type="number"
+          [(ngModel)]="knownDistance"
+          [disabled]="useMagnification"
+          placeholder="Ingrese distancia">
+        </ion-input>
+      </ion-item>
+      <ion-item lines="inset">
+        <ion-label position="stacked">Unidad</ion-label>
+        <ion-input
+          type="text"
+          [(ngModel)]="unitOfMeasurement"
+          placeholder="Ingrese unidad">
+        </ion-input>
+      </ion-item>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="calibration-actions">
+      <ion-button expand="block" color="primary" (click)="save()">Guardar</ion-button>
+      <ion-button expand="block" color="danger" (click)="dismiss()">Cancelar</ion-button>
+    </div>
+  </div>
+</ion-content>

@@ -14,7 +14,8 @@ const routes: Routes = [
   {
     path: 'image-preview',
     loadChildren: () => import('./image-preview/image-preview.module').then( m => m.ImagePreviewPageModule)
-  }
+  },
+  
 ];
 @NgModule({
   imports: [

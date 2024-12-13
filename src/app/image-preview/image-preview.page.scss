@@ -11,4 +11,54 @@ ion-content {
   .canvas-container {
     height: calc(100vh - 300px); /* Ajustar altura para botones más grandes en pantallas pequeñas */
   }
+  ion-footer {
+    background: #f7f7f7;
+    padding: 10px;
+    text-align: center;
+    font-size: 14px;
+    color: #333;
+  
+    .info-container {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+  }
+  .calibration-container {
+    padding: 20px;
+    text-align: center;
+  
+    h3 {
+      margin-bottom: 10px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+  
+    ion-item {
+      margin: 10px 0;
+    }
+  
+    .calibration-actions {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+  
+      ion-button {
+        width: 100px;
+      }
+    }
+  }
+  .info-container {
+    padding: 10px;
+    background-color: var(--ion-color-light);
+    text-align: center;
+    font-size: 14px;
+    color: var(--ion-color-dark);
+  
+    p {
+      margin: 5px 0;
+    }
+  }
+  
+  
 }
