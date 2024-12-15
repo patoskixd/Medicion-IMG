@@ -1,0 +1,43 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Historial de Tramos</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Tabla de resultados -->
+  <ion-grid>
+    <ion-row>
+      <ion-col size="2" *ngIf="isClearing"></ion-col>
+      <ion-col size="3"><strong>Tramo</strong></ion-col>
+      <ion-col size="7"><strong>Distancia ({{ unitOfMeasurement }})</strong></ion-col>
+    </ion-row>
+    <ion-row *ngFor="let item of history">
+      <ion-col size="2" *ngIf="isClearing">
+        <ion-checkbox [(ngModel)]="selectedMap[item.tramo]"></ion-checkbox>
+      </ion-col>
+      <ion-col size="3">{{ item.tramo }}</ion-col>
+      <ion-col size="7">{{ item.distancia.toFixed(2) }}</ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- Botones de acción -->
+  <div class="actions">
+    <ion-button expand="full" color="primary" (click)="exportToCSV()">Exportar a CSV</ion-button>
+
+    <!-- Botón inicial para entrar en modo limpieza -->
+    <ion-button expand="full" color="secondary" (click)="enterClearingMode()" *ngIf="!isClearing">
+      Limpiar Resultados
+    </ion-button>
+
+    <!-- Botones para eliminar y cancelar en modo limpieza -->
+    <div *ngIf="isClearing">
+      <ion-button expand="full" color="danger" (click)="confirmDeleteSelected()">Eliminar Seleccionados</ion-button>
+      <ion-button expand="full" color="warning" (click)="confirmClearAll()">Limpiar Todo</ion-button>
+      <ion-button expand="full" color="medium" (click)="cancelClearing()">Cancelar</ion-button>
+    </div>
+  </div>
+</ion-content>

@@ -1,64 +1,134 @@
 ion-content {
-  --background: #f7f7f7;
+  --background: #eef2f5; /* Fondo suave para una apariencia moderna */
 
   .button-container {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap; /* Permitir que los botones se ajusten en pantallas pequeñas */
+    gap: 12px; /* Espaciado entre botones */
     margin: 16px 0;
-    gap: 10px;
+
+    ion-button {
+      font-size: 16px;
+      font-weight: bold;
+      padding: 10px 20px;
+      border-radius: 30px; /* Bordes curvados */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+      min-width: 130px; /* Asegurar tamaño mínimo */
+      text-align: center;
+    }
+
+    ion-button[color="secondary"] {
+      --background: #007bff; /* Azul */
+      --background-activated: #0056b3;
+      --color: white;
+    }
+
+    ion-button[color="tertiary"] {
+      --background: #17a2b8; /* Turquesa */
+      --background-activated: #117a8b;
+      --color: white;
+    }
+
+    ion-button[color="danger"] {
+      --background: #dc3545; /* Rojo */
+      --background-activated: #c82333;
+      --color: white;
+    }
+
+    ion-button[color="warning"] {
+      --background: #ffc107; /* Amarillo */
+      --background-activated: #e0a800;
+      --color: black;
+    }
+
+    ion-button[color="success"] {
+      --background: #28a745; /* Verde */
+      --background-activated: #218838;
+      --color: white;
+    }
+  }
+
+  .zoom-controls {
+    display: flex;
+    justify-content: center;
+    gap: 12px; /* Espaciado entre botones */
+    margin: 16px 0;
+
+    ion-button {
+      border-radius: 50%; /* Botones circulares */
+      width: 50px;
+      height: 50px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+      --background: #6c757d; /* Gris */
+      --background-activated: #495057;
+      --color: white;
+    }
+
+    ion-icon {
+      font-size: 20px; /* Tamaño del ícono */
+    }
   }
 
   .canvas-container {
-    height: calc(100vh - 300px); /* Ajustar altura para botones más grandes en pantallas pequeñas */
+    height: calc(100vh - 300px); /* Ajustar altura para cabecera y botones */
+    background: #ffffff; /* Fondo blanco */
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    margin: 0 16px; /* Espaciado lateral */
   }
+
   ion-footer {
-    background: #f7f7f7;
-    padding: 10px;
+    background: #f8f9fa; /* Fondo claro */
+    padding: 12px;
     text-align: center;
     font-size: 14px;
-    color: #333;
-  
+    color: #343a40; /* Texto gris oscuro */
+    border-top: 1px solid #dee2e6; /* Separador superior */
+
     .info-container {
       display: flex;
       flex-direction: column;
       gap: 5px;
-    }
-  }
-  .calibration-container {
-    padding: 20px;
-    text-align: center;
-  
-    h3 {
-      margin-bottom: 10px;
-      font-size: 20px;
-      font-weight: bold;
-    }
-  
-    ion-item {
-      margin: 10px 0;
-    }
-  
-    .calibration-actions {
-      display: flex;
-      justify-content: space-around;
-      margin-top: 20px;
-  
-      ion-button {
-        width: 100px;
+
+      p {
+        margin: 0;
+        font-weight: bold;
       }
     }
   }
-  .info-container {
-    padding: 10px;
-    background-color: var(--ion-color-light);
-    text-align: center;
-    font-size: 14px;
-    color: var(--ion-color-dark);
-  
-    p {
-      margin: 5px 0;
-    }
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .button-container {
+    flex-direction: column; /* Botones en columna en pantallas pequeñas */
+    align-items: center;
   }
-  
-  
+
+  .zoom-controls {
+    gap: 8px; /* Reducir espaciado entre botones */
+  }
+
+  .canvas-container {
+    height: calc(100vh - 350px); /* Reducir altura en pantallas pequeñas */
+  }
+
+  ion-footer {
+    font-size: 12px; /* Reducir tamaño de texto */
+  }
+}
+
+@media (min-width: 1024px) {
+  .button-container {
+    gap: 16px; /* Más espacio en pantallas grandes */
+  }
+
+  .canvas-container {
+    margin: 0 32px; /* Aumentar espaciado lateral */
+  }
+
+  ion-footer {
+    font-size: 16px; /* Texto más grande en pantallas grandes */
+  }
 }

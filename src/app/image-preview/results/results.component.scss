@@ -1,0 +1,115 @@
+/* Contenedor principal */
+ion-content {
+    --background: #f4f6f8; /* Fondo claro */
+    padding: 16px;
+  }
+  
+  /* Cabecera */
+  ion-header {
+    ion-toolbar {
+      --background: #4caf50; /* Color verde para la cabecera */
+      --color: white; /* Texto blanco */
+      text-align: center;
+      font-weight: bold;
+    }
+  }
+  
+  /* Botones */
+  .actions {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centrar los botones */
+    gap: 12px; /* Espaciado entre botones */
+  }
+  
+  ion-button {
+    font-weight: bold;
+    font-size: 16px;
+    border-radius: 50px; /* Botones con esquinas totalmente curvas */
+    width: 80%; /* Reducir el ancho */
+    max-width: 400px; /* Máximo ancho */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra */
+  }
+  
+  ion-button[color="primary"] {
+    --background: #007bff; /* Azul */
+    --background-activated: #0056b3; /* Azul más oscuro al presionar */
+    --color: white;
+  }
+  
+  ion-button[color="secondary"] {
+    --background: #6c757d; /* Gris */
+    --background-activated: #495057;
+    --color: white;
+  }
+  
+  ion-button[color="danger"] {
+    --background: #dc3545; /* Rojo */
+    --background-activated: #c82333;
+    --color: white;
+  }
+  
+  ion-button[color="warning"] {
+    --background: #ffc107; /* Amarillo */
+    --background-activated: #e0a800;
+    --color: black;
+  }
+  
+  ion-button[color="medium"] {
+    --background: #6c757d; /* Gris medio */
+    --background-activated: #495057;
+    --color: white;
+  }
+  
+  /* Tabla de resultados */
+  ion-grid {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  
+  ion-row {
+    align-items: center;
+    text-align: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #e9ecef;
+  }
+  
+  ion-row:last-child {
+    border-bottom: none;
+  }
+  
+  ion-col {
+    font-size: 16px;
+    font-weight: 500;
+  }
+  
+  ion-col:first-child {
+    color: #007bff; /* Azul */
+  }
+  
+  ion-col:last-child {
+    color: #28a745; /* Verde */
+  }
+  
+  /* Checkboxes */
+  ion-checkbox {
+    --background: #6c757d; /* Gris */
+    --checkmark-color: white; /* Color del check */
+  }
+  
+  /* Diseño responsivo */
+  @media (min-width: 768px) {
+    .actions {
+      flex-direction: row; /* Botones en fila para pantallas grandes */
+      justify-content: center; /* Centrar los botones */
+    }
+  
+    ion-col {
+      font-size: 18px;
+    }
+  }
+  

@@ -2,7 +2,7 @@ import { Component, ElementRef, ViewChild, HostListener } from '@angular/core';
 import Konva from 'konva';
 import { ModalController } from '@ionic/angular';
 import { CalibrationFormComponent } from './calibration-form/calibration-form.component';
-
+import { ResultsComponent } from './results/results.component';
 import { ToastController } from '@ionic/angular';
 
 
@@ -34,10 +34,41 @@ export class ImagePreviewPage {
   public selectedMagnification: number | null = null; // Ampliación seleccionada
   public unitsPerPixel: number | null = null; // Factor de conversión entre píxeles y unidades reales
   
+  public history: { tramo: number; distancia: number }[] = []; // Lista de tramos calculados
+  private tramoCounter = 1; 
 
 
   constructor(private toastController: ToastController, private modalController: ModalController) {}
 
+
+  ngOnInit() {
+    this.resetHistory();
+    // Eliminar cualquier escala almacenada previamente
+    localStorage.removeItem('unitsPerPixel');
+    localStorage.removeItem('unitOfMeasurement');
+  
+    // Reiniciar variables relacionadas con la calibración
+    this.unitsPerPixel = null;
+    this.unitOfMeasurement = 'µm';
+    this.knownDistance = null;
+  
+    console.log('Calibración eliminada. Debes realizar una nueva escala.');
+  
+    // Cargar la imagen desde el estado del historial
+    const state = history.state;
+    if (state.image) {
+      this.imageObj.src = state.image;
+      this.imageObj.onload = () => {
+        this.initializeStage();
+        this.addImageToStage();
+      };
+    }
+    
+  }
+  private resetHistory() {
+    this.history = [];
+    this.tramoCounter = 1;
+  }
   async openCalibrationDialog() {
     if (this.markers.marker1 && this.markers.marker2) {
       let convertedDistance: number | null = null;
@@ -109,8 +140,6 @@ export class ImagePreviewPage {
   }
   
   
-  
-
 
   private async showToast(message: string) {
     const toast = await this.toastController.create({
@@ -122,30 +151,6 @@ export class ImagePreviewPage {
   
     await toast.present();
   }
-  
-  ngOnInit() {
-    // Eliminar cualquier escala almacenada previamente
-    localStorage.removeItem('unitsPerPixel');
-    localStorage.removeItem('unitOfMeasurement');
-  
-    // Reiniciar variables relacionadas con la calibración
-    this.unitsPerPixel = null;
-    this.unitOfMeasurement = 'µm';
-    this.knownDistance = null;
-  
-    console.log('Calibración eliminada. Debes realizar una nueva escala.');
-  
-    // Cargar la imagen desde el estado del historial
-    const state = history.state;
-    if (state.image) {
-      this.imageObj.src = state.image;
-      this.imageObj.onload = () => {
-        this.initializeStage();
-        this.addImageToStage();
-      };
-    }
-  }
-  
   
   
   @HostListener('window:resize')
@@ -353,13 +358,39 @@ private calculateDistance() {
     const distanceInUnits = distanceInPixels * this.unitsPerPixel;
     console.log(`Distancia medida: ${distanceInPixels.toFixed(2)} píxeles.`);
     console.log(`Distancia convertida: ${distanceInUnits.toFixed(2)} ${this.unitOfMeasurement}.`);
+
+    // Agregar el nuevo tramo al historial
+    this.history.push({
+      tramo: this.tramoCounter++,
+      distancia: distanceInUnits,
+    });
   } else {
     console.log(`Distancia medida: ${distanceInPixels.toFixed(2)} píxeles.`);
     console.log(`Calibración no establecida.`);
   }
+
 }
 
+async openResultsDialog() {
+  const modal = await this.modalController.create({
+    component: ResultsComponent,
+    componentProps: {
+      history: this.history, // Pasar el historial al modal
+      unitOfMeasurement: this.unitOfMeasurement, // Pasar la unidad
+    },
+  });
 
+  modal.onDidDismiss().then((result) => {
+    if (result.data) {
+      this.history = result.data.updatedHistory || [];
+      this.tramoCounter = this.history.length > 0 
+        ? Math.max(...this.history.map((item) => item.tramo)) + 1 
+        : 1; // Ajustar el contador para nuevos tramos
+    }
+  });
+
+  await modal.present();
+}
   //Botones de zoom
   async zoomIn() {
     if (this.isLocked) {
