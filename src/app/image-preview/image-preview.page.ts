@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, HostListener } from '@angular/core';
+import { Component, ElementRef, ViewChild, HostListener,OnInit } from '@angular/core';
 import Konva from 'konva';
 import { ModalController } from '@ionic/angular';
 import { CalibrationFormComponent } from './calibration-form/calibration-form.component';
@@ -19,7 +19,7 @@ export class ImagePreviewPage {
   private markerLayer!: Konva.Layer;
   private imageObj = new Image();
   private konvaImage!: Konva.Image;
-  private markers: { marker1?: Konva.Circle; marker2?: Konva.Circle } = {};
+  private markers: { marker1?: Konva.Group; marker2?: Konva.Group } = {};
   private line!: Konva.Line;
   private scaleFactor = 1; // Factor de escala para mantener la calidad
   private isLocked: boolean = false; // Indica si el zoom y el movimiento están bloqueados
@@ -43,6 +43,7 @@ export class ImagePreviewPage {
 
   ngOnInit() {
     this.resetHistory();
+    this.loadImageFromState();
     // Eliminar cualquier escala almacenada previamente
     localStorage.removeItem('unitsPerPixel');
     localStorage.removeItem('unitOfMeasurement');
@@ -63,8 +64,24 @@ export class ImagePreviewPage {
         this.addImageToStage();
       };
     }
-    
+
   }
+  private loadImageFromState() {
+    const state = history.state;
+    if (state.image) {
+      this.updateImage(state.image);
+    }
+  }
+  private updateImage(imageSrc: string) {
+    this.imageObj.src = imageSrc;
+    this.imageObj.onload = () => {
+      if (!this.stage) {
+        this.initializeStage();
+      }
+      this.addImageToStage();
+    };
+  }
+  
   private resetHistory() {
     this.history = [];
     this.tramoCounter = 1;
@@ -201,6 +218,10 @@ export class ImagePreviewPage {
     this.konvaImage.position({ x: imageX, y: imageY });
     this.imageLayer.draw();
     this.resizeStage();
+    this.imageSize = {
+      width: this.imageObj.width,
+      height: this.imageObj.height,
+    };
     
   }
 
@@ -295,31 +316,59 @@ export class ImagePreviewPage {
       this.stage.off('click touchstart');
     });
   }
+  
 
   private addMarker(x: number, y: number, color: string, marker: 'marker1' | 'marker2') {
     if (this.markers[marker]) {
       this.markers[marker]!.destroy();
     }
-
+  
     const markerPos = this.transformMarkerToImageCoords(x, y);
-
-    const newMarker = new Konva.Circle({
+  
+    // Estilo del marcador: círculo con borde o cruz
+    const newMarker = new Konva.Group({
       x: markerPos.x,
       y: markerPos.y,
-      radius: 5,
-      fill: color,
     });
-
+  
+    // Fondo del marcador
+    const outerCircle = new Konva.Circle({
+      radius: 8,
+      fill: '#FFFFFF', // Fondo blanco
+      stroke: color, // Color de borde
+      strokeWidth: 2,
+    });
+  
+    // Círculo interior
+    const innerCircle = new Konva.Circle({
+      radius: 4,
+      fill: color, // Color del marcador
+    });
+  
+    // Alternativa: marcador estilo cruz
+    const cross = new Konva.Line({
+      points: [-5, 0, 5, 0, 0, -5, 0, 5], // Coordenadas para la cruz
+      stroke: color,
+      strokeWidth: 2,
+      lineCap: 'round',
+      lineJoin: 'round',
+    });
+  
+    // Añadir estilo deseado: puedes usar `cross` o `innerCircle` con `outerCircle`
+    newMarker.add(outerCircle, innerCircle); // O reemplaza con `cross` si prefieres la cruz
+  
     this.markerLayer.add(newMarker);
     this.markerLayer.draw();
-
+  
     this.markers[marker] = newMarker;
-
+  
     if (this.markers.marker1 && this.markers.marker2) {
       this.drawLine();
       this.calculateDistance();
     }
   }
+  
+  
 
   private drawLine() {
     if (this.line) {
@@ -466,7 +515,7 @@ async openResultsDialog() {
 
     // Habilitar zoom y movimiento
     this.isLocked = false; // Desbloquear controles
-    this.konvaImage.draggable(false); // Permitir mover la imagen
+    this.konvaImage.draggable(true); // Permitir mover la imagen
   
     // Redibujar la capa
     this.markerLayer.draw();

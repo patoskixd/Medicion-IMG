@@ -1,0 +1,114 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Tutorial</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/home">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <h1>Cómo Usar MediLab</h1>
+  <p>Aprovecha al máximo nuestra aplicación para mediciones precisas en imágenes de microscopios.</p>
+
+  <!-- Cargar Imágenes -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>1. Cargar Imagen</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>
+        Para <strong>Cargar la imagen</strong> deberas seleccionarla de tu galeria, asegurate de que la imagen selecciona se encuentre bien enfocada, que el campo visual este completo y bien definido el contorno circular, A continuacion, sigue estos paso:
+      </p>
+      <div class="step">
+        <p><strong>Paso 1:</strong> Presiona el boton subir imagen y selecciona en tu galeria la imagen que desea.</p>
+        <img src="assets/images/cargar-imagen1.png" alt="Paso 1: Selección de objetivo" class="tutorial-image" />
+      </div>
+      <div class="step">
+        <p><strong>Paso 2:</strong> Ya seleccionada la imagen adecuada deberas confirmar la imagen para comenzar.</p>
+        <img src="assets/images/cargar-imagen2.png" alt="Paso 1: Selección de objetivo" class="tutorial-image" />
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Calibrar automatica -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>2.1. Calibración Automática</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Para la <strong>calibracion automatica</strong> deberemos ser capaces de visualizar nuestra imagen completa. A continuación, sigue estos pasos:</p>
+
+      <!-- Paso 1 -->
+      <div class="step">
+        <p><strong>Paso 1:</strong> Coloca los puntos en los extremos del circulo.</p>
+        <img src="assets/images/calibracion-automatica1.png" alt="Paso 1: Selección de objetivo" class="tutorial-image" />
+      </div>
+
+      <!-- Paso 2 -->
+      <div class="step">
+        <p><strong>Paso 2:</strong> Selecciona la opcion de usar objetivos y escoje el objetivo correspondiete a la imagen con su unidad de medida correspondiente.</p>
+        <img src="assets/images/calibracion-automatica2.png" alt="Paso 2: Verificar calibración" class="tutorial-image" />
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+    <!-- Calibrar manual -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>2.2. Calibración manual</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Para la <strong>calibracion manual</strong> deberemos constar siempre con una barra de calibración o deberemos conocer la distancia que hay entre los puntos. A continuacion, sigue estos pasos:</p>
+  
+        <!-- Paso 1 -->
+        <div class="step">
+          <p><strong>Paso 1:</strong> Colocas los puntos en los extremos de la barra de calibración.</p>
+          <img src="assets/images/calibracion-manual1.png" alt="Paso 1: Selección de objetivo" class="tutorial-image" />
+        </div>
+  
+        <!-- Paso 2 -->
+        <div class="step">
+          <p><strong>Paso 2:</strong> Escribiremos en nuestro formulario de calibración la distancia que actualmente conocemos con su unidad de medida correspondiente.</p>
+          <img src="assets/images/calibracion-manual2.png" alt="Paso 2: Verificar calibración" class="tutorial-image" />
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+  <!-- Medir Distancias -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>3. Medir Distancias</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Para realizar la <strong>medicion de distancia</strong> deberemos tener ya la imagen calibrada correctamente y nuestro resultado se mostrara abajo de nuestra imagen. A continuación, sigue este paso:</p>
+
+      <!-- Paso 1 -->
+      <div class="step">
+        <p><strong>Paso 1:</strong> Coloca los puntos donde desear calcular la distancia.</p>
+        <img src="assets/images/medir-distancia-1.png" alt="Paso 1: Colocar puntos" class="tutorial-image" />
+      </div>
+
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Resultados -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>4. Historial</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Tenemos un apartado donde podemos visualizar todas las mediciones realizadas a nuestra imagen, donde nos indican a que medicion corresponde y nuesta medida correspondiente. Donde puedes realizar lo siguiente:</p>
+      <div class="step">
+        <p><strong>Opcion 1:</strong> Exportar nuestra tabla de resultado a un archivo CSV.</p>
+        <img src="assets/images/resultados1.png" alt="Paso 2: Ver resultado" class="tutorial-image" />
+      </div>
+      <div class="step">
+        <p><strong>Paso 2:</strong> Eliminar los resultados, donde tendremos varias opciones dentro de esta.</p>
+        <img src="assets/images/resultados2.png" alt="Paso 2: Ver resultado" class="tutorial-image" />
+      </div>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

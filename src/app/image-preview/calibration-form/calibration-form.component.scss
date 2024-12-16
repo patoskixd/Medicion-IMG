@@ -1,62 +1,113 @@
+ion-content {
+  --background: #f5f5f5;
+}
+
 .calibration-container {
-    padding: 16px;
-  
-    .header-title {
-      font-size: 1.4em;
-      font-weight: bold;
-      text-align: center;
-      margin-bottom: 8px;
-      color: var(--ion-color-primary);
-    }
-  
-    .measured-distance {
-      font-size: 1em;
-      text-align: center;
-      margin-bottom: 16px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  margin-top: 16px;
+}
+
+h2 {
+  color: #212121;
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.measured-distance {
+  color: #757575;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+ion-list {
+  background: transparent;
+  padding: 0;
+}
+
+ion-item {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  --background: transparent;
+  --border-color: #e0e0e0;
+  --highlight-height: 0;
+  margin-bottom: 16px;
+}
+
+ion-label {
+  color: #616161;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+ion-toggle {
+  --background: #bdbdbd;
+  --background-checked: var(--ion-color-primary);
+  --handle-background: #ffffff;
+  --handle-background-checked: #ffffff;
+}
+
+ion-input {
+  --padding-start: 0;
+  font-size: 16px;
+  color: #212121;
+}
+
+.button-container {
+  margin-top: 24px;
+}
+
+.save-button {
+  --background: var(--ion-color-primary);
+  --color: #ffffff;
+  --border-radius: 4px;
+  --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 8px;
+  text-transform: none;
+  font-weight: 500;
+}
+
+.cancel-button {
+  --color: var(--ion-color-primary);
+  --border-radius: 4px;
+  text-transform: none;
+  font-weight: 500;
+}
+
+.magnification-select {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+
+  .android-select {
+    max-width: 100%;
+    padding-right: 20px;
+    position: relative;
+
+    &::part(icon) {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
       color: var(--ion-color-medium);
     }
-  
-    .toggle-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 16px;
-    }
-  
-    .magnification-container,
-    .manual-input-container {
-      ion-item {
-        margin-bottom: 8px;
-  
-        ion-label {
-          font-size: 0.9em;
-          color: var(--ion-color-dark);
-        }
-  
-        ion-input {
-          font-size: 1em;
-        }
-  
-        ion-select {
-          font-size: 1em;
-        }
-      }
-    }
-  
-    .calibration-actions {
-      margin-top: 16px;
-  
-      ion-button {
-        font-size: 1em;
-        margin: 8px 0;
-      }
+
+    &::part(text) {
+      color: #212121;
+      font-size: 16px;
+      padding-right: 24px;
     }
   }
-  
-  @media (min-width: 768px) {
-    .calibration-container {
-      max-width: 500px;
-      margin: 0 auto;
-    }
+}
+
+@media (min-width: 768px) {
+  .calibration-container {
+    max-width: 400px;
+    margin: 32px auto;
   }
-  
+}
+

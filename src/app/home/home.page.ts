@@ -11,25 +11,20 @@ export class HomePage {
 
   constructor(private router: Router) {}
 
-  onImageSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
+  onImageSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
       const reader = new FileReader();
-
       reader.onload = () => {
-        this.selectedImage = reader.result as string; // Aquí ya tienes el base64
+        this.selectedImage = reader.result as string;
       };
-
-      reader.readAsDataURL(file); // Convierte la imagen en base64 automáticamente
+      reader.readAsDataURL(file);
     }
   }
 
-  confirmImage(): void {
+  confirmImage() {
     if (this.selectedImage) {
       this.router.navigate(['/image-preview'], { state: { image: this.selectedImage } });
-    } else {
-      console.warn('No hay imagen seleccionada aún.');
     }
   }
 }

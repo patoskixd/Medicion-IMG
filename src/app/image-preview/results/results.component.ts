@@ -29,14 +29,18 @@ export class ResultsComponent {
     const selectedTramos = Object.keys(this.selectedMap)
       .filter((key) => this.selectedMap[+key])
       .map((key) => +key);
-      
+    
     if (selectedTramos.length === 0) {
       return;
     }
 
+    const message = selectedTramos.length === 1
+      ? `¿Estás seguro de eliminar la medicion ${selectedTramos[0]}?`
+      : `¿Estás seguro de eliminar las mediciones seleccionadas (${selectedTramos.join(', ')})?`;
+
     const alert = await this.alertController.create({
       header: 'Confirmar eliminación',
-      message: `¿Estás seguro de eliminar los tramos seleccionados (${selectedTramos.join(', ')})?`,
+      message: message,
       buttons: [
         {
           text: 'Cancelar',
@@ -55,7 +59,7 @@ export class ResultsComponent {
   async confirmClearAll() {
     const alert = await this.alertController.create({
       header: 'Confirmar limpieza',
-      message: '¿Estás seguro de eliminar todos los tramos?',
+      message: '¿Estás seguro de eliminar todas las mediciones?',
       buttons: [
         {
           text: 'Cancelar',
@@ -99,6 +103,37 @@ export class ResultsComponent {
   }
 
   exportToCSV() {
-    // Lógica para exportar resultados a CSV
+    if (this.history.length === 0) {
+      this.showAlert('No hay datos para exportar.');
+      return;
+    }
+  
+    const header = ['Medicion', `Distancia (${this.unitOfMeasurement})`];
+    const rows = this.history.map(item => [item.tramo, item.distancia.toFixed(2)]);
+  
+    const csvContent = [
+      header.join(','), 
+      ...rows.map(row => row.join(','))
+    ].join('\n');
+  
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'historial_mediciones.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
+  
+  private async showAlert(message: string) {
+    const alert = await this.alertController.create({
+      header: 'Exportar CSV',
+      message: message,
+      buttons: ['Aceptar'],
+    });
+    await alert.present();
+  }
+  
 }
+

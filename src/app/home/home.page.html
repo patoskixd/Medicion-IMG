@@ -1,32 +1,39 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-title>
-      Bienvenido a mi Aplicación
+      MediLab
     </ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/tutorial">
+        <ion-icon slot="icon-only" name="help-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
+
 
 <ion-content class="ion-padding">
   <!-- Mensaje de Bienvenida -->
   <div class="welcome-container">
-    <h1>¡Hola! 👋</h1>
-    <p>Bienvenido a nuestra aplicación. Estamos encantados de tenerte aquí.</p>
+    <h1>¡Bienvenido! 👋</h1>
+    <p>A la mejor aplicacion para realizar las de mediciones de distancia de tus imagenes del microoscopio.</p>
   </div>
-
   <!-- Apartado para Cargar una Imagen -->
   <div class="image-upload-container">
-    <p>Selecciona una imagen para personalizar tu experiencia:</p>
-    <ion-button color="secondary" expand="full" (click)="fileInput.click()">
-      <ion-icon slot="start" name="image-outline"></ion-icon>
-      Seleccionar Imagen
+    <p>Selecciona una imagen para comenzar:</p>
+    <ion-button color="secondary" expand="block" (click)="fileInput.click()">
+      <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
+      Subir Imagen
     </ion-button>
     <input type="file" #fileInput accept="image/*" (change)="onImageSelected($event)" hidden />
   </div>
   
   <!-- Imagen Preview -->
   <div class="image-preview" *ngIf="selectedImage">
+    <p>Esta es la imagen selecciona, si es la correcta presiona confirmar.</p>
     <img [src]="selectedImage" alt="Vista previa de la imagen" />
-    <ion-button color="success" expand="full" (click)="confirmImage()">
+    <ion-button color="success" expand="block" (click)="confirmImage()">
+      <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
       Confirmar Imagen
     </ion-button>
   </div>

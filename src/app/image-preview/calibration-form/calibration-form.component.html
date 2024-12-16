@@ -2,61 +2,52 @@
   <ion-toolbar color="primary">
     <ion-title>Calibración</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="dismiss()">Cerrar</ion-button>
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content>
+
+<ion-content class="ion-padding">
   <div class="calibration-container">
-    <h3 class="header-title">Configuración de Escala</h3>
+    <h2>Configuración de Escala</h2>
     <p class="measured-distance">Distancia medida: {{ measuredDistance }} píxeles</p>
 
-    <!-- Checkbox -->
-    <ion-item lines="none" class="toggle-item">
-      <ion-label>Usar ampliación</ion-label>
-      <ion-checkbox [(ngModel)]="useMagnification" color="secondary"></ion-checkbox>
-    </ion-item>
+    <ion-list>
+      <ion-item>
+        <ion-label>Usar Objetivos</ion-label>
+        <ion-toggle [(ngModel)]="useMagnification" color="primary"></ion-toggle>
+      </ion-item>
 
-    <!-- Ampliación: visible solo si el checkbox está activo -->
-    <div *ngIf="useMagnification" class="magnification-container">
-      <ion-item lines="inset">
-        <ion-label position="stacked">Ampliación</ion-label>
-        <ion-select
-          [(ngModel)]="selectedMagnification"
-          (ionChange)="onMagnificationChange()"
-          interface="popover">
+      <ion-item *ngIf="useMagnification" class="magnification-select">
+        <ion-label>Objetivo</ion-label>
+        <ion-select [(ngModel)]="selectedMagnification" (ionChange)="onMagnificationChange()" interface="popover" class="android-select">
           <ion-select-option *ngFor="let mag of magnificationOptions" [value]="mag">
             {{ mag }}x
           </ion-select-option>
         </ion-select>
       </ion-item>
-    </div>
 
-    <!-- Distancia conocida y Unidad -->
-    <div class="manual-input-container">
-      <ion-item lines="inset">
+      <ion-item>
         <ion-label position="stacked">Distancia conocida</ion-label>
-        <ion-input
-          type="number"
-          [(ngModel)]="knownDistance"
-          [disabled]="useMagnification"
-          placeholder="Ingrese distancia">
-        </ion-input>
+        <ion-input type="number" [(ngModel)]="knownDistance" [disabled]="useMagnification"></ion-input>
       </ion-item>
-      <ion-item lines="inset">
-        <ion-label position="stacked">Unidad</ion-label>
-        <ion-input
-          type="text"
-          [(ngModel)]="unitOfMeasurement"
-          placeholder="Ingrese unidad">
-        </ion-input>
-      </ion-item>
-    </div>
 
-    <!-- Botones de acción -->
-    <div class="calibration-actions">
-      <ion-button expand="block" color="primary" (click)="save()">Guardar</ion-button>
-      <ion-button expand="block" color="danger" (click)="dismiss()">Cancelar</ion-button>
+      <ion-item>
+        <ion-label position="stacked">Unidad de medida</ion-label>
+        <ion-input type="text" [(ngModel)]="unitOfMeasurement"></ion-input>
+      </ion-item>
+    </ion-list>
+
+    <div class="button-container">
+      <ion-button expand="block" (click)="save()" class="save-button">
+        <ion-icon name="checkmark" slot="start"></ion-icon>
+        Guardar
+      </ion-button>
+      <ion-button expand="block" (click)="dismiss()" fill="clear" class="cancel-button">
+        Cancelar
+      </ion-button>
     </div>
   </div>
 </ion-content>
