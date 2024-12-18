@@ -126,7 +126,7 @@ export class ImagePreviewPage {
   
       await modal.present();
     } else {
-      this.showToast('Por favor, coloque dos marcadores antes de calibrar.');
+      this.showToast('Por favor, coloque los puntos antes de calibrar.');
     }
   }
   
@@ -310,7 +310,7 @@ export class ImagePreviewPage {
         console.log(`Marcador ${marker} colocado en: x=${imageCoords.x}, y=${imageCoords.y}`);
       } else {
         console.log('El clic está fuera de los límites de la imagen.');
-        await this.showToast('El marcador está fuera de los límites de la imagen.'); // Notificacion para q se ponga vio
+        await this.showToast('Los puntos están fuera de los límites de la imagen.'); // Notificacion para q se ponga vio
       }
 
       this.stage.off('click touchstart');
@@ -322,53 +322,54 @@ export class ImagePreviewPage {
     if (this.markers[marker]) {
       this.markers[marker]!.destroy();
     }
-  
+
     const markerPos = this.transformMarkerToImageCoords(x, y);
-  
-    // Estilo del marcador: círculo con borde o cruz
+
+    // Create a group for the marker
     const newMarker = new Konva.Group({
       x: markerPos.x,
       y: markerPos.y,
     });
-  
-    // Fondo del marcador
-    const outerCircle = new Konva.Circle({
-      radius: 8,
-      fill: '#FFFFFF', // Fondo blanco
-      stroke: color, // Color de borde
+
+    // Main circle
+    const circle = new Konva.Circle({
+      radius: 10,
+      fill: color,
+      stroke: 'white',
       strokeWidth: 2,
+      shadowColor: 'black',
+      shadowBlur: 5,
+      shadowOffset: { x: 1, y: 1 },
+      shadowOpacity: 0.3,
     });
-  
-    // Círculo interior
-    const innerCircle = new Konva.Circle({
-      radius: 4,
-      fill: color, // Color del marcador
+
+    // Inner dot
+    const innerDot = new Konva.Circle({
+      radius: 3,
+      fill: 'white',
     });
-  
-    // Alternativa: marcador estilo cruz
-    const cross = new Konva.Line({
-      points: [-5, 0, 5, 0, 0, -5, 0, 5], // Coordenadas para la cruz
-      stroke: color,
-      strokeWidth: 2,
-      lineCap: 'round',
-      lineJoin: 'round',
-    });
-  
-    // Añadir estilo deseado: puedes usar `cross` o `innerCircle` con `outerCircle`
-    newMarker.add(outerCircle, innerCircle); // O reemplaza con `cross` si prefieres la cruz
-  
+
+    // Pulse animation
+    const pulseAnimation = new Konva.Animation((frame) => {
+      if (!frame) return;
+      const scale = 1 + Math.sin(frame.time * 0.005) * 0.1;
+      circle.scale({ x: scale, y: scale });
+    }, this.markerLayer);
+
+    newMarker.add(circle, innerDot);
+
     this.markerLayer.add(newMarker);
     this.markerLayer.draw();
-  
+
+    pulseAnimation.start();
+
     this.markers[marker] = newMarker;
-  
+
     if (this.markers.marker1 && this.markers.marker2) {
       this.drawLine();
       this.calculateDistance();
     }
   }
-  
-  
 
   private drawLine() {
     if (this.line) {
@@ -382,16 +383,36 @@ export class ImagePreviewPage {
       this.markers.marker2!.y(),
     ];
 
+    // Create line group
+    const lineGroup = new Konva.Group();
+
+    // Main line
     this.line = new Konva.Line({
       points,
-      stroke: 'green',
-      strokeWidth: 2,
-      lineJoin: 'round',
+      stroke: '#2196F3', // Material Design blue
+      strokeWidth: 3,
+      lineCap: 'round',
+      dash: [10, 5],
+      shadowColor: 'black',
+      shadowBlur: 2,
+      shadowOffset: { x: 1, y: 1 },
+      shadowOpacity: 0.3,
     });
 
-    this.markerLayer.add(this.line);
+    // Dash animation
+    const dashAnimation = new Konva.Animation((frame) => {
+      if (!frame) return;
+      const dashOffset = -frame.time / 50;
+      this.line!.dashOffset(dashOffset);
+    }, this.markerLayer);
+
+    lineGroup.add(this.line);
+    this.markerLayer.add(lineGroup);
     this.markerLayer.draw();
+
+    dashAnimation.start();
   }
+  
 // Calcula la distancia en px
 private calculateDistance() {
   const marker1 = this.markers.marker1!;
@@ -421,6 +442,12 @@ private calculateDistance() {
 }
 
 async openResultsDialog() {
+  // Verifica si el historial está vacío
+  if (this.history.length === 0) {
+    await this.showToast('No hay valores en el historial.'); // Mostrar un mensaje de advertencia
+    return;
+  }
+
   const modal = await this.modalController.create({
     component: ResultsComponent,
     componentProps: {
@@ -440,11 +467,12 @@ async openResultsDialog() {
 
   await modal.present();
 }
+
   //Botones de zoom
   async zoomIn() {
     if (this.isLocked) {
       console.log('Zoom bloqueado.');
-      await this.showToast('Zoom bloqueado, restablecer marcadores para aplicarlo.'); // Notificacion para q se ponga vio
+      await this.showToast('Zoom bloqueado, restablecer los puntos para aplicarlo.'); // Notificacion para q se ponga vio
       return;
     }
     
@@ -461,7 +489,7 @@ async openResultsDialog() {
   async zoomOut() {
     if (this.isLocked) {
       console.log('Zoom bloqueado.');
-      await this.showToast('Zoom bloqueado, restablecer marcadores para aplicarlo.'); // Notificacion para q se ponga vio
+      await this.showToast('Zoom bloqueado, restablecer los puntos para aplicarlo.'); // Notificacion para q se ponga vio
       return;
     }
     const scaleBy = 0.8; // Factor de reducción
@@ -519,7 +547,7 @@ async openResultsDialog() {
   
     // Redibujar la capa
     this.markerLayer.draw();
-    console.log('Marcadores restablecidos.');
+    console.log('Puntos restablecidos.');
   }
   
   

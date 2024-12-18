@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { ModalController, AlertController } from '@ionic/angular';
+//import { File } from '@awesome-cordova-plugins/file/ngx';
 
 @Component({
   selector: 'app-results',
@@ -13,7 +14,7 @@ export class ResultsComponent {
   selectedMap: { [key: number]: boolean } = {}; // Mapa de selección de tramos
   isClearing: boolean = false; // Estado para mostrar controles de limpieza
 
-  constructor(private modalController: ModalController, private alertController: AlertController) {}
+  constructor(private modalController: ModalController, private alertController: AlertController, ) {}
 
   dismiss() {
     this.modalController.dismiss({
@@ -102,38 +103,5 @@ export class ResultsComponent {
     this.selectedMap = {}; // Limpiar el mapa de selección
   }
 
-  exportToCSV() {
-    if (this.history.length === 0) {
-      this.showAlert('No hay datos para exportar.');
-      return;
-    }
-  
-    const header = ['Medicion', `Distancia (${this.unitOfMeasurement})`];
-    const rows = this.history.map(item => [item.tramo, item.distancia.toFixed(2)]);
-  
-    const csvContent = [
-      header.join(','), 
-      ...rows.map(row => row.join(','))
-    ].join('\n');
-  
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', 'historial_mediciones.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
-  
-  private async showAlert(message: string) {
-    const alert = await this.alertController.create({
-      header: 'Exportar CSV',
-      message: message,
-      buttons: ['Aceptar'],
-    });
-    await alert.present();
-  }
-  
 }
 

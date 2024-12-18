@@ -20,8 +20,8 @@
           <ion-item-sliding *ngFor="let item of history">
             <ion-item>
               <ion-label>
-                <h2>Medicion {{ item.tramo }}</h2>
-                <p>{{ item.distancia.toFixed(2) }} {{ unitOfMeasurement }}</p>
+                <h2>Medición {{ item.tramo }}</h2>
+                <p>Distancia: {{ item.distancia.toFixed(2) }} {{ unitOfMeasurement }}</p>
               </ion-label>
               <ion-checkbox slot="end" *ngIf="isClearing" [(ngModel)]="selectedMap[item.tramo]"></ion-checkbox>
             </ion-item>
@@ -36,10 +36,6 @@
     </ion-card>
 
     <div class="actions">
-      <ion-button expand="block" color="primary" (click)="exportToCSV()">
-        <ion-icon name="download-outline" slot="start"></ion-icon>
-        Exportar a archivo CSV
-      </ion-button>
 
       <ion-button expand="block" color="secondary" (click)="enterClearingMode()" *ngIf="!isClearing">
         <ion-icon name="trash-outline" slot="start"></ion-icon>

@@ -4,14 +4,20 @@ ion-content {
   .main-controls {
     display: flex;
     flex-direction: column;
+    gap: 10px;
     padding: 10px;
     background: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
     .marker-controls {
       display: flex;
-      justify-content: space-between;
-      margin-bottom: 10px;
+      justify-content: center;
+      gap: 15px; /* Espaciado entre los botones */
+    }
+
+    .reset-button {
+      align-self: center;
+      width: auto;
     }
 
     ion-button {
@@ -19,10 +25,6 @@ ion-content {
       font-size: 14px;
       font-weight: 600;
       height: 40px;
-    }
-
-    .reset-button {
-      width: 100%;
     }
   }
 
@@ -112,45 +114,18 @@ ion-content {
   }
 }
 
-/* Estilos específicos de los botones */
-ion-button {
-  &[color="secondary"] {
-    --background: #007bff;
-    --background-activated: #0056b3;
-  }
-
-  &[color="tertiary"] {
-    --background: #17a2b8;
-    --background-activated: #117a8b;
-  }
-
-  &[color="danger"] {
-    --background: #dc3545;
-    --background-activated: #c82333;
-  }
-
-  &[color="warning"] {
-    --background: #ffc107;
-    --background-activated: #e0a800;
-    --color: black;
-  }
-
-  &[color="success"] {
-    --background: #28a745;
-    --background-activated: #218838;
-  }
-}
-
 /* Responsividad */
 @media (max-width: 768px) {
   ion-content {
     .main-controls {
       .marker-controls {
-        flex-direction: column;
+        flex-direction: row; /* Mantén los botones en fila horizontal */
+        flex-wrap: wrap; /* Asegura que haya ajuste si falta espacio */
+        justify-content: center;
         gap: 10px;
 
         ion-button {
-          width: 100%;
+          width: auto;
         }
       }
     }
@@ -172,19 +147,12 @@ ion-button {
 @media (min-width: 769px) {
   ion-content {
     .main-controls {
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-
       .marker-controls {
-        flex: 1;
-        justify-content: flex-start;
-        gap: 10px;
-        margin-bottom: 0;
+        justify-content: center; /* Botones centrados horizontalmente */
       }
 
       .reset-button {
-        width: auto;
+        margin-top: 10px;
       }
     }
 
@@ -195,17 +163,5 @@ ion-button {
     .results-panel, .secondary-controls {
       margin: 20px;
     }
-
-    .zoom-controls {
-      ion-button {
-        width: 36px;
-        height: 36px;
-
-        ion-icon {
-          font-size: 20px;
-        }
-      }
-    }
   }
 }
-

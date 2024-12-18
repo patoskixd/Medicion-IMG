@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
 import { IonicModule } from '@ionic/angular';
 
 import { ImagePreviewPageRoutingModule } from './image-preview-routing.module';
@@ -15,6 +14,6 @@ import { ImagePreviewPage } from './image-preview.page';
     IonicModule,
     ImagePreviewPageRoutingModule
   ],
-  declarations: [ImagePreviewPage]
+  declarations: [ImagePreviewPage],
 })
 export class ImagePreviewPageModule {}
