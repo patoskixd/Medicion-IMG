@@ -191,71 +191,77 @@ export class ImagePreviewPage {
     this.stage.add(this.markerLayer);
   }
 //Configuracion de la imagenes
-  private addImageToStage() {
-    const container = this.konvaContainer.nativeElement;
-    const scaleX = container.offsetWidth / this.imageObj.width;
-    const scaleY = container.offsetHeight / this.imageObj.height;
-    this.scaleFactor = Math.min(scaleX, scaleY);
-  
-    this.imageSize = { width: this.imageObj.width, height: this.imageObj.height }; // Asignar tamaño de la imagen
+private addImageToStage() {
+  const container = this.konvaContainer.nativeElement;
 
-    const imageX = (container.offsetWidth - this.imageObj.width * this.scaleFactor) / 2;
-    const imageY = (container.offsetHeight - this.imageObj.height * this.scaleFactor) / 2;
-  
-    if (!this.konvaImage) {
-      this.konvaImage = new Konva.Image({
-        image: this.imageObj,
-        x: imageX,
-        y: imageY,
-        scaleX: this.scaleFactor,
-        scaleY: this.scaleFactor,
-        draggable: false // Permitir mover la imagen
-      });
-      this.imageLayer.add(this.konvaImage);
-    }
-  
+  const scaleX = container.offsetWidth / this.imageObj.width;
+  const scaleY = container.offsetHeight / this.imageObj.height;
+
+  this.scaleFactor = Math.min(scaleX, scaleY);
+
+  const imageWidth = this.imageObj.width * this.scaleFactor;
+  const imageHeight = this.imageObj.height * this.scaleFactor;
+
+  // Actualizar las dimensiones de la imagen en la UI
+  this.imageSize = {
+    width: Math.round(this.imageObj.width),
+    height: Math.round(this.imageObj.height),
+  };
+
+  container.style.width = `${imageWidth}px`;
+  container.style.height = `${imageHeight}px`;
+
+  if (!this.konvaImage) {
+    this.konvaImage = new Konva.Image({
+      image: this.imageObj,
+      x: 0,
+      y: 0,
+      scaleX: this.scaleFactor,
+      scaleY: this.scaleFactor,
+      draggable: true,
+    });
+
+    this.imageLayer.add(this.konvaImage);
+    this.addDragMoveListener(); // Restringir los límites
+  }
+
+  this.konvaImage.scale({ x: this.scaleFactor, y: this.scaleFactor });
+  this.konvaImage.position({ x: 0, y: 0 });
+  this.imageLayer.draw();
+  this.resizeStage();
+}
+
+private resizeStage() {
+  const container = this.konvaContainer.nativeElement;
+
+  const scaleX = container.offsetWidth / this.imageObj.width;
+  const scaleY = container.offsetHeight / this.imageObj.height;
+
+  this.scaleFactor = Math.min(scaleX, scaleY);
+
+  const imageWidth = this.imageObj.width * this.scaleFactor;
+  const imageHeight = this.imageObj.height * this.scaleFactor;
+
+  this.imageSize = {
+    width: Math.round(this.imageObj.width),
+    height: Math.round(this.imageObj.height),
+  };
+
+  container.style.width = `${imageWidth}px`;
+  container.style.height = `${imageHeight}px`;
+
+  this.stage.width(imageWidth);
+  this.stage.height(imageHeight);
+
+  if (this.konvaImage) {
     this.konvaImage.scale({ x: this.scaleFactor, y: this.scaleFactor });
-    this.konvaImage.position({ x: imageX, y: imageY });
-    this.imageLayer.draw();
-    this.resizeStage();
-    this.imageSize = {
-      width: this.imageObj.width,
-      height: this.imageObj.height,
-    };
-    
+    this.konvaImage.position({ x: 0, y: 0 });
   }
 
-  private resizeStage() {
-    const container = this.konvaContainer.nativeElement;
+  this.imageLayer.draw();
+  this.updateMarkersAndLine();
+}
 
-    // Calcular el factor de escala
-    const scaleX = container.offsetWidth / this.imageObj.width;
-    const scaleY = container.offsetHeight / this.imageObj.height;
-    this.scaleFactor = Math.min(scaleX, scaleY);
-
-    // Calcular la posición para centrar la imagen
-    const imageX = (container.offsetWidth - this.imageObj.width * this.scaleFactor) / 2;
-    const imageY = (container.offsetHeight - this.imageObj.height * this.scaleFactor) / 2;
-
-    if (this.konvaImage) {
-      // Solo actualiza la escala y posición
-      this.konvaImage.scale({ x: this.scaleFactor, y: this.scaleFactor });
-      this.konvaImage.position({ x: imageX, y: imageY });
-    } else {
-      // Crea la imagen por primera vez
-      this.konvaImage = new Konva.Image({
-        image: this.imageObj,
-        x: imageX,
-        y: imageY,
-        scaleX: this.scaleFactor,
-        scaleY: this.scaleFactor,
-      });
-      this.imageLayer.add(this.konvaImage);
-    }
-
-    this.imageLayer.draw();
-    this.updateMarkersAndLine();
-  }
 
   private updateMarkersAndLine() {
     Object.values(this.markers).forEach((marker) => {
@@ -472,14 +478,13 @@ async openResultsDialog() {
   async zoomIn() {
     if (this.isLocked) {
       console.log('Zoom bloqueado.');
-      await this.showToast('Zoom bloqueado, restablecer los puntos para aplicarlo.'); // Notificacion para q se ponga vio
+      await this.showToast('Zoom bloqueado, restablecer los puntos para aplicarlo.');
       return;
     }
-    
+  
     const scaleBy = 1.2; // Factor de aumento
     const oldScale = this.konvaImage.scaleX();
     const newScale = oldScale * scaleBy;
-    this.konvaImage.draggable(newScale > 1);
   
     this.konvaImage.scale({ x: newScale, y: newScale });
     this.centerImageOnZoom(newScale, oldScale);
@@ -489,39 +494,94 @@ async openResultsDialog() {
   async zoomOut() {
     if (this.isLocked) {
       console.log('Zoom bloqueado.');
-      await this.showToast('Zoom bloqueado, restablecer los puntos para aplicarlo.'); // Notificacion para q se ponga vio
+      await this.showToast('Zoom bloqueado, restablecer los puntos para aplicarlo.');
       return;
     }
+  
     const scaleBy = 0.8; // Factor de reducción
     const oldScale = this.konvaImage.scaleX();
     const newScale = oldScale * scaleBy;
+  
+    // Límite mínimo de escala: igual a la escala inicial
+    const minScale = this.scaleFactor; // `this.scaleFactor` es la escala inicial calculada
+  
+    // Asegúrate de que el nuevo zoom no sea menor que el límite mínimo
+    if (newScale < minScale) {
+      console.log('Zoom out alcanzó el tamaño original.');
+      this.konvaImage.scale({ x: minScale, y: minScale });
+      this.centerImageOnZoom(minScale, oldScale);
+      await this.showToast('No se puede reducir más la imagen.');
+      return;
+    }
   
     this.konvaImage.scale({ x: newScale, y: newScale });
     this.centerImageOnZoom(newScale, oldScale);
     this.konvaImage.draggable(true);
   }
   
+  
+  
   private centerImageOnZoom(newScale: number, oldScale: number) {
     const container = this.konvaContainer.nativeElement;
+  
+    // Obtener el centro del contenedor
     const stageWidth = container.offsetWidth;
     const stageHeight = container.offsetHeight;
   
+    // Obtener el centro visible actual de la imagen
+    const currentCenterX = stageWidth / 2 - this.konvaImage.x();
+    const currentCenterY = stageHeight / 2 - this.konvaImage.y();
+  
+    // Escalar el centro visible actual
+    const scaledCenterX = currentCenterX * (newScale / oldScale);
+    const scaledCenterY = currentCenterY * (newScale / oldScale);
+  
+    // Calcular la nueva posición para centrar la imagen
+    const newPosX = stageWidth / 2 - scaledCenterX;
+    const newPosY = stageHeight / 2 - scaledCenterY;
+  
+    // Limitar el movimiento para que la imagen no se salga del contenedor
     const imageWidth = this.imageObj.width * newScale;
     const imageHeight = this.imageObj.height * newScale;
   
-    // Ajustar posición para centrar la imagen
-    const newPosX = Math.max(
-      Math.min(this.konvaImage.x(), (stageWidth - imageWidth) / 2),
-      0
-    );
-    const newPosY = Math.max(
-      Math.min(this.konvaImage.y(), (stageHeight - imageHeight) / 2),
-      0
-    );
+    const minX = Math.min(0, stageWidth - imageWidth);
+    const maxX = 0;
+    const limitedX = Math.max(minX, Math.min(newPosX, maxX));
   
-    this.konvaImage.position({ x: newPosX, y: newPosY });
+    const minY = Math.min(0, stageHeight - imageHeight);
+    const maxY = 0;
+    const limitedY = Math.max(minY, Math.min(newPosY, maxY));
+  
+    this.konvaImage.position({ x: limitedX, y: limitedY });
     this.imageLayer.draw();
   }
+  
+  
+  private enforceImageBounds() {
+    const container = this.konvaContainer.nativeElement;
+  
+    const imageWidth = this.imageObj.width * this.konvaImage.scaleX();
+    const imageHeight = this.imageObj.height * this.konvaImage.scaleY();
+  
+    const minX = Math.min(0, container.offsetWidth - imageWidth);
+    const maxX = 0;
+  
+    const minY = Math.min(0, container.offsetHeight - imageHeight);
+    const maxY = 0;
+  
+    const newX = Math.max(minX, Math.min(this.konvaImage.x(), maxX));
+    const newY = Math.max(minY, Math.min(this.konvaImage.y(), maxY));
+  
+    this.konvaImage.position({ x: newX, y: newY });
+    this.imageLayer.draw();
+  }
+  
+  private addDragMoveListener() {
+    this.konvaImage.on('dragmove', () => {
+      this.enforceImageBounds();
+    });
+  }
+  
 
   //Reset de los marcadores
   resetMarkers() {
