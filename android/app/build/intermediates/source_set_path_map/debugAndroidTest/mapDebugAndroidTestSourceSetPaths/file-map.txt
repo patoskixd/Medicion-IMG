@@ -1,0 +1,6 @@
+io.ionic.starter.test.app-core-1.5.0-0 C:\Users\pa_ti\.gradle\caches\8.9\transforms\1a2115fb11575112a1083a5fa012615e\transformed\core-1.5.0\res
+io.ionic.starter.test.app-annotation-experimental-1.3.0-1 C:\Users\pa_ti\.gradle\caches\8.9\transforms\2a7ec03794092355620a86ba79ec53e0\transformed\annotation-experimental-1.3.0\res
+io.ionic.starter.test.app-androidTest-2 C:\medicion-img\Medicion-IMG\android\app\build\generated\res\resValues\androidTest\debug
+io.ionic.starter.test.app-mergeDebugAndroidTestResources-3 C:\medicion-img\Medicion-IMG\android\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\merged.dir
+io.ionic.starter.test.app-mergeDebugAndroidTestResources-4 C:\medicion-img\Medicion-IMG\android\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\stripped.dir
+io.ionic.starter.test.app-debugAndroidTest-5 C:\medicion-img\Medicion-IMG\android\app\build\intermediates\merged_res\debugAndroidTest\mergeDebugAndroidTestResources
