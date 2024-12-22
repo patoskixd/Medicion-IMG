@@ -1,0 +1,71 @@
+ion-content {
+  --background: #f4f7fa;
+}
+
+.tutorial-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ion-color-primary);
+  margin-bottom: 8px;
+}
+
+.tutorial-subtitle {
+  font-size: 16px;
+  color: var(--ion-color-medium);
+  margin-bottom: 24px;
+}
+
+ion-accordion-group {
+  margin-bottom: 24px;
+}
+
+ion-accordion {
+  margin-bottom: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+ion-item {
+  --background: var(--ion-color-light);
+  --color: var(--ion-color-dark);
+  font-weight: 600;
+}
+
+.tutorial-image {
+  width: 100%;
+  border-radius: 8px;
+  margin: 15px 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.step {
+  margin-bottom: 20px;
+  background-color: var(--ion-color-light);
+  border-radius: 8px;
+  padding: 16px;
+
+  p {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 12px;
+    color: var(--ion-color-dark);
+  }
+
+  strong {
+    color: var(--ion-color-primary);
+  }
+}
+
+ion-img {
+  display: block;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  ion-content {
+    max-width: 768px;
+    margin: 0 auto;
+  }
+}
+

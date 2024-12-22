@@ -1,0 +1,62 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Historial</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="results-container">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Mediciones Realizadas</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item-sliding *ngFor="let item of history">
+            <ion-item>
+              <ion-label>
+                <h2>Medición {{ item.tramo }}</h2>
+                <p>Distancia: {{ item.distancia.toFixed(2) }} {{ unitOfMeasurement }}</p>
+              </ion-label>
+              <ion-checkbox slot="end" *ngIf="isClearing" [(ngModel)]="selectedMap[item.tramo]"></ion-checkbox>
+            </ion-item>
+            <ion-item-options side="end">
+              <ion-item-option color="danger" (click)="toggleSelection(item.tramo); confirmDeleteSelected()">
+                <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+              </ion-item-option>
+            </ion-item-options>
+          </ion-item-sliding>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <div class="actions">
+
+      <ion-button expand="block" color="secondary" (click)="enterClearingMode()" *ngIf="!isClearing">
+        <ion-icon name="trash-outline" slot="start"></ion-icon>
+        Eliminar Mediciones
+      </ion-button>
+
+      <ng-container *ngIf="isClearing">
+        <ion-button expand="block" color="danger" (click)="confirmDeleteSelected()">
+          <ion-icon name="trash-outline" slot="start"></ion-icon>
+          Eliminar Solo Los Seleccionados
+        </ion-button>
+        <ion-button expand="block" color="warning" (click)="confirmClearAll()">
+          <ion-icon name="trash-bin-outline" slot="start"></ion-icon>
+          Eliminar Todo
+        </ion-button>
+        <ion-button expand="block" color="medium" (click)="cancelClearing()">
+          <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+          Cancelar
+        </ion-button>
+      </ng-container>
+    </div>
+  </div>
+</ion-content>
+

@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button routerLink="/home">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Vista de Imagen</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Main Controls -->
+  <div class="main-controls">
+    <div class="marker-controls">
+      <ion-button color="secondary" (click)="setMarker('marker1')">
+        <ion-icon slot="start" name="location-outline"></ion-icon>
+        Punto 1
+      </ion-button>
+      <ion-button color="tertiary" (click)="setMarker('marker2')">
+        <ion-icon slot="start" name="location-outline"></ion-icon>
+        Punto 2
+      </ion-button>
+    </div>
+    <ion-button color="danger" (click)="resetMarkers()" class="reset-button">
+      <ion-icon slot="start" name="refresh-outline"></ion-icon>
+      Restablecer Puntos
+    </ion-button>
+  </div>
+
+  <!-- Canvas Container -->
+  <div class="canvas-container">
+    <div #konvaContainer class="konva-container"></div>
+    <div class="zoom-controls">
+      <ion-button (click)="zoomIn()">
+        <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="zoomOut()">
+        <ion-icon slot="icon-only" name="remove-outline"></ion-icon>
+      </ion-button>
+    </div>
+    <div class="image-size">
+      {{ imageSize.width }} x {{ imageSize.height }} px
+    </div>
+  </div>
+
+  <!-- Results Panel -->
+  <div class="results-panel" *ngIf="measuredDistance !== null && unitsPerPixel !== null">
+    <h3>Resultados</h3>
+    <p>Distancia medida: {{ (measuredDistance * unitsPerPixel).toFixed(2) }} {{ unitOfMeasurement }}</p>
+  </div>
+
+  <!-- Secondary Controls -->
+  <div class="secondary-controls">
+    <ion-button color="warning" (click)="openCalibrationDialog()">
+      <ion-icon slot="start" name="options-outline"></ion-icon>
+      Calibrar
+    </ion-button>
+    <ion-button color="success" (click)="openResultsDialog()">
+      <ion-icon slot="start" name="list-outline"></ion-icon>
+      Ver Historial
+    </ion-button>
+  </div>
+</ion-content>

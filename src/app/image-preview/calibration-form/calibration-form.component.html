@@ -1,0 +1,53 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Calibración</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="calibration-container">
+    <h2>Configuración de Escala</h2>
+    <p class="measured-distance">Distancia medida: {{ measuredDistance }} píxeles</p>
+
+    <ion-list>
+      <ion-item>
+        <ion-label>Usar Objetivos</ion-label>
+        <ion-toggle [(ngModel)]="useMagnification" color="primary"></ion-toggle>
+      </ion-item>
+
+      <ion-item *ngIf="useMagnification" class="magnification-select">
+        <ion-label>Objetivo</ion-label>
+        <ion-select [(ngModel)]="selectedMagnification" (ionChange)="onMagnificationChange()" interface="popover" class="android-select">
+          <ion-select-option *ngFor="let mag of magnificationOptions" [value]="mag">
+            {{ mag }}x
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Distancia conocida</ion-label>
+        <ion-input type="number" [(ngModel)]="knownDistance" [disabled]="useMagnification"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Unidad de medida</ion-label>
+        <ion-input type="text" [(ngModel)]="unitOfMeasurement"></ion-input>
+      </ion-item>
+    </ion-list>
+
+    <div class="button-container">
+      <ion-button expand="block" (click)="save()" class="save-button">
+        <ion-icon name="checkmark" slot="start"></ion-icon>
+        Guardar
+      </ion-button>
+      <ion-button expand="block" (click)="dismiss()" fill="clear" class="cancel-button">
+        Cancelar
+      </ion-button>
+    </div>
+  </div>
+</ion-content>
