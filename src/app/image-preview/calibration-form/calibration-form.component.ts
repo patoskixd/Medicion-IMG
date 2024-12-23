@@ -11,7 +11,9 @@ export class CalibrationFormComponent {
 
   public useMagnification = false;
   public magnificationOptions = [4, 10, 40, 100];
+  public fieldOfViewOptions = [18, 20]; // Opciones en mm
   public selectedMagnification: number | null = null;
+  public selectedFieldOfView: number | null = null; 
   public knownDistance: number | null = null;
   public unitOfMeasurement: string = 'µm';
 
@@ -26,23 +28,16 @@ export class CalibrationFormComponent {
   }
 
   onMagnificationChange() {
-    switch (this.selectedMagnification) {
-      case 4:
-        this.knownDistance = 4500;
-        break;
-      case 10:
-        this.knownDistance = 1800;
-        break;
-      case 40:
-        this.knownDistance = 450;
-        break;
-      case 100:
-        this.knownDistance = 180;
-        break;
-      default:
-        this.knownDistance = null;
+    if (this.selectedFieldOfView && this.selectedMagnification) {
+      // Calcular la distancia conocida en micrómetros
+      const fieldOfViewMM = this.selectedFieldOfView;
+      const magnification = this.selectedMagnification;
+      this.knownDistance = (fieldOfViewMM / magnification) * 1000; // Convertir a micrómetros
+      console.log(`Campo de visión: ${fieldOfViewMM}mm, Objetivo: ${magnification}x`);
+      console.log(`Distancia conocida: ${this.knownDistance} µm`);
+    } else {
+      this.knownDistance = null;
     }
-    console.log(`Ampliación seleccionada: ${this.selectedMagnification}x, distancia conocida: ${this.knownDistance}`);
   }
 
   async save() {

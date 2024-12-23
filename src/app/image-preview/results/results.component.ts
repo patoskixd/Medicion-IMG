@@ -1,6 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { ModalController, AlertController } from '@ionic/angular';
-//import { File } from '@awesome-cordova-plugins/file/ngx';
+import { Router } from '@angular/router';
+import { MeasurementDialogComponent } from '../measurement-dialog/measurement-dialog.component';
+
 
 @Component({
   selector: 'app-results',
@@ -8,19 +10,64 @@ import { ModalController, AlertController } from '@ionic/angular';
   styleUrls: ['./results.component.scss'],
 })
 export class ResultsComponent {
-  @Input() history: { tramo: number; distancia: number }[] = [];
+  @Input() history: { tramo: number; distancia: number; label?: string; marker1: { x: number; y: number }; marker2: { x: number; y: number }, image:string; }[] = [];
   @Input() unitOfMeasurement: string = '';
 
-  selectedMap: { [key: number]: boolean } = {}; // Mapa de selección de tramos
-  isClearing: boolean = false; // Estado para mostrar controles de limpieza
+  selectedMap: { [key: number]: boolean } = {};
+  isClearing: boolean = false;
 
-  constructor(private modalController: ModalController, private alertController: AlertController, ) {}
+  constructor(private modalController: ModalController, private alertController: AlertController, private router: Router) {}
 
   dismiss() {
     this.modalController.dismiss({
       updatedHistory: this.history,
     });
   }
+
+  async addLabel(item: any) {
+    const alert = await this.alertController.create({
+      header: 'Agregar Etiqueta',
+      inputs: [
+        {
+          name: 'label',
+          type: 'text',
+          placeholder: 'Etiqueta (ej. Célula 1)',
+        },
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Guardar',
+          handler: (data) => {
+            if (data.label) {
+              item.label = data.label;
+            }
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+
+  async viewMeasurement(item: any) {
+    const modal = await this.modalController.create({
+      component: MeasurementDialogComponent,
+      componentProps: {
+        image: item.image, // Fuente de la imagen
+        marker1: item.marker1, // Coordenadas del marcador 1
+        marker2: item.marker2, // Coordenadas del marcador 2
+      },
+    });
+    await modal.present();
+  }
+  
+  
+  
+  
 
   toggleSelection(tramo: number) {
     this.selectedMap[tramo] = !this.selectedMap[tramo];
@@ -30,18 +77,18 @@ export class ResultsComponent {
     const selectedTramos = Object.keys(this.selectedMap)
       .filter((key) => this.selectedMap[+key])
       .map((key) => +key);
-    
+
     if (selectedTramos.length === 0) {
       return;
     }
 
     const message = selectedTramos.length === 1
-      ? `¿Estás seguro de eliminar la medicion ${selectedTramos[0]}?`
+      ? `¿Estás seguro de eliminar la medición ${selectedTramos[0]}?`
       : `¿Estás seguro de eliminar las mediciones seleccionadas (${selectedTramos.join(', ')})?`;
 
     const alert = await this.alertController.create({
       header: 'Confirmar eliminación',
-      message: message,
+      message,
       buttons: [
         {
           text: 'Cancelar',
@@ -50,25 +97,6 @@ export class ResultsComponent {
         {
           text: 'Eliminar',
           handler: () => this.deleteSelected(),
-        },
-      ],
-    });
-
-    await alert.present();
-  }
-
-  async confirmClearAll() {
-    const alert = await this.alertController.create({
-      header: 'Confirmar limpieza',
-      message: '¿Estás seguro de eliminar todas las mediciones?',
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-        },
-        {
-          text: 'Limpiar todo',
-          handler: () => this.clearAll(),
         },
       ],
     });
@@ -90,18 +118,16 @@ export class ResultsComponent {
 
   clearAll() {
     this.history = [];
-    this.selectedMap = {}; 
+    this.selectedMap = {};
     this.isClearing = false;
   }
 
   enterClearingMode() {
-    this.isClearing = true; // Entrar en el modo de limpieza
+    this.isClearing = true;
   }
 
   cancelClearing() {
-    this.isClearing = false; // Salir del modo de limpieza
-    this.selectedMap = {}; // Limpiar el mapa de selección
+    this.isClearing = false;
+    this.selectedMap = {};
   }
-
 }
-

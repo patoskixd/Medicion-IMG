@@ -16,8 +16,17 @@
 
     <ion-list>
       <ion-item>
-        <ion-label>Usar Objetivos</ion-label>
+        <ion-label>Calibrar con Objetivos</ion-label>
         <ion-toggle [(ngModel)]="useMagnification" color="primary"></ion-toggle>
+      </ion-item>
+      
+      <ion-item *ngIf="useMagnification" class="field-of-view-select">
+        <ion-label>Número de Campo  Visión</ion-label>
+        <ion-select [(ngModel)]="selectedFieldOfView" (ionChange)="onMagnificationChange()" interface="popover" class="android-select">
+          <ion-select-option *ngFor="let field of fieldOfViewOptions" [value]="field">
+            {{ field }} mm
+          </ion-select-option>
+        </ion-select>
       </ion-item>
 
       <ion-item *ngIf="useMagnification" class="magnification-select">

@@ -66,6 +66,14 @@
   --ion-color-danger-shade: #cf3c4f;
   --ion-color-danger-tint: #ed576b;
 
+    --ion-color-ok: #4BB543;
+    --ion-color-ok-rgb: 75, 181, 67; 
+    --ion-color-ok-contrast: #ffffff;
+    --ion-color-ok-contrast-rgb: 255,255,255;
+    --ion-color-ok-shade: #3da63b;
+    --ion-color-ok-tint: #5ccc52;
+  
+
   --ion-color-dark: #222428;
   --ion-color-dark-rgb: 34, 36, 40;
   --ion-color-dark-contrast: #ffffff;
@@ -349,4 +357,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .shadow {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.my-custom-toast {
+  --background: #4BB543;  /* Color de fondo */
+  --color: #ffffff;       /* Color del texto */
 }

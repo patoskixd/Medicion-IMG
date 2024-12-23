@@ -33,8 +33,9 @@ export class ImagePreviewPage {
   public magnificationOptions = [4, 10, 40, 100]; // Opciones de ampliación
   public selectedMagnification: number | null = null; // Ampliación seleccionada
   public unitsPerPixel: number | null = null; // Factor de conversión entre píxeles y unidades reales
-  
-  public history: { tramo: number; distancia: number }[] = []; // Lista de tramos calculados
+  private savedScale: number = 1; // Escala guardada
+  private savedPosition: { x: number; y: number } = { x: 0, y: 0 };
+  public history: { tramo: number; distancia: number ; marker1:{x:number; y:number}; marker2: {x:number; y:number},image: string; }[] = []; // Lista de tramos calculados
   private tramoCounter = 1; 
 
 
@@ -65,6 +66,7 @@ export class ImagePreviewPage {
       };
     }
 
+
   }
   private loadImageFromState() {
     const state = history.state;
@@ -94,7 +96,8 @@ export class ImagePreviewPage {
       if (this.unitsPerPixel && this.measuredDistance) {
         convertedDistance = this.measuredDistance * this.unitsPerPixel;
       }
-  
+      this.savedScale = this.konvaImage.scaleX();
+      this.savedPosition = this.konvaImage.position();
       const modal = await this.modalController.create({
         component: CalibrationFormComponent,
         componentProps: {
@@ -122,11 +125,12 @@ export class ImagePreviewPage {
   
           console.log(`Escala guardada: ${this.unitsPerPixel} ${this.unitOfMeasurement}/píxel.`);
         }
+        this.restoreImageState();
       });
   
       await modal.present();
     } else {
-      this.showToast('Por favor, coloque los puntos antes de calibrar.');
+      this.showAlert('Por favor, coloque los puntos antes de calibrar.');
     }
   }
   
@@ -140,7 +144,7 @@ export class ImagePreviewPage {
       // Usar la distancia y unidad de medida ingresadas
       this.unitsPerPixel = this.knownDistance / this.measuredDistance!;
     } else {
-      this.showToast('Complete todos los campos antes de guardar la calibración.');
+      this.showAlert('Complete todos los campos antes de guardar la calibración.');
       return;
     }
   
@@ -158,12 +162,22 @@ export class ImagePreviewPage {
   
   
 
-  private async showToast(message: string) {
+  private async showAlert(message: string) {
     const toast = await this.toastController.create({
       message,
       duration: 3000, // Duración en milisegundos
       position: 'top', // Posición: 'top', 'middle', o 'bottom'
       color: 'danger', // Color de la notificación
+    });
+  
+    await toast.present();
+  }
+  private async showGreenAlert(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000, // Duración en milisegundos
+      position: 'top', // Posición: 'top', 'middle', o 'bottom'
+      cssClass: 'my-custom-toast', // Color de la notificación
     });
   
     await toast.present();
@@ -229,6 +243,16 @@ private addImageToStage() {
   this.konvaImage.position({ x: 0, y: 0 });
   this.imageLayer.draw();
   this.resizeStage();
+}
+private restoreImageState() {
+  // Restaurar el nivel de zoom
+  this.konvaImage.scale({ x: this.savedScale, y: this.savedScale });
+
+  // Restaurar la posición
+  this.konvaImage.position(this.savedPosition);
+
+  // Redibujar la capa para reflejar los cambios
+  this.imageLayer.draw();
 }
 
 private resizeStage() {
@@ -314,9 +338,6 @@ private resizeStage() {
       ) {
         this.addMarker(imageCoords.x, imageCoords.y, marker === 'marker1' ? 'red' : 'blue', marker);
         console.log(`Marcador ${marker} colocado en: x=${imageCoords.x}, y=${imageCoords.y}`);
-      } else {
-        console.log('El clic está fuera de los límites de la imagen.');
-        await this.showToast('Los puntos están fuera de los límites de la imagen.'); // Notificacion para q se ponga vio
       }
 
       this.stage.off('click touchstart');
@@ -435,11 +456,8 @@ private calculateDistance() {
     console.log(`Distancia medida: ${distanceInPixels.toFixed(2)} píxeles.`);
     console.log(`Distancia convertida: ${distanceInUnits.toFixed(2)} ${this.unitOfMeasurement}.`);
 
-    // Agregar el nuevo tramo al historial
-    this.history.push({
-      tramo: this.tramoCounter++,
-      distancia: distanceInUnits,
-    });
+
+
   } else {
     console.log(`Distancia medida: ${distanceInPixels.toFixed(2)} píxeles.`);
     console.log(`Calibración no establecida.`);
@@ -450,7 +468,7 @@ private calculateDistance() {
 async openResultsDialog() {
   // Verifica si el historial está vacío
   if (this.history.length === 0) {
-    await this.showToast('No hay valores en el historial.'); // Mostrar un mensaje de advertencia
+    await this.showAlert('No hay valores en el historial.'); // Mostrar un mensaje de advertencia
     return;
   }
 
@@ -478,7 +496,7 @@ async openResultsDialog() {
   async zoomIn() {
     if (this.isLocked) {
       console.log('Zoom bloqueado.');
-      await this.showToast('Zoom bloqueado, restablecer los puntos para aplicarlo.');
+      await this.showAlert('Zoom bloqueado, restablecer los puntos para aplicarlo.');
       return;
     }
   
@@ -494,7 +512,7 @@ async openResultsDialog() {
   async zoomOut() {
     if (this.isLocked) {
       console.log('Zoom bloqueado.');
-      await this.showToast('Zoom bloqueado, restablecer los puntos para aplicarlo.');
+      await this.showAlert('Zoom bloqueado, restablecer los puntos para aplicarlo.');
       return;
     }
   
@@ -510,7 +528,7 @@ async openResultsDialog() {
       console.log('Zoom out alcanzó el tamaño original.');
       this.konvaImage.scale({ x: minScale, y: minScale });
       this.centerImageOnZoom(minScale, oldScale);
-      await this.showToast('No se puede reducir más la imagen.');
+      await this.showAlert('No se puede reducir más la imagen.');
       return;
     }
   
@@ -607,8 +625,42 @@ async openResultsDialog() {
   
     // Redibujar la capa
     this.markerLayer.draw();
-    console.log('Puntos restablecidos.');
+
   }
+  async saveMeasurement() {
+    if (this.markers.marker1 && this.markers.marker2 && this.measuredDistance !== null && this.unitsPerPixel !== null) {
+      const distance = (this.measuredDistance * this.unitsPerPixel).toFixed(2);
+  
+      const marker1Pos = {
+        x: this.markers.marker1!.x() / this.konvaImage.scaleX(),
+        y: this.markers.marker1!.y() / this.konvaImage.scaleY(),
+      };
+  
+      const marker2Pos = {
+        x: this.markers.marker2!.x() / this.konvaImage.scaleX(),
+        y: this.markers.marker2!.y() / this.konvaImage.scaleY(),
+      };
+  
+      // Guardar en el historial
+      this.history.push({
+        tramo: this.tramoCounter++,
+        distancia: +distance,
+        marker1: marker1Pos,
+        marker2: marker2Pos,
+        image:this.imageObj.src,
+      });
+  
+      this.showGreenAlert(`Medición guardada. Distancia: ${distance} ${this.unitOfMeasurement}`);
+    } else {
+      this.showAlert('Por favor, complete la calibración y marque los puntos antes de guardar.');
+    }
+  }
+  
+  isCalibrated(): boolean {
+    return this.unitsPerPixel !== null;
+  }
+
+  
   
   
   
