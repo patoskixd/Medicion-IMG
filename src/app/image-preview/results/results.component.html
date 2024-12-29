@@ -3,7 +3,7 @@
     <ion-title>Historial</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="dismiss()">
-        <ion-icon name="close"></ion-icon>
+        <ion-icon name="close-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -17,27 +17,22 @@
       </ion-card-header>
       <ion-card-content>
         <ion-list>
-          <ion-item-sliding *ngFor="let item of history">
-            <ion-item>
-              <ion-label>
-                <h2>Medición {{ item.tramo }}</h2>
-                <p>Distancia: {{ item.distancia.toFixed(2) }} {{ unitOfMeasurement }}</p>
-                <p *ngIf="item.label">Etiqueta: {{ item.label }}</p>
-              </ion-label>
-              <ion-checkbox slot="end" *ngIf="isClearing" [(ngModel)]="selectedMap[item.tramo]"></ion-checkbox>
-            </ion-item>
-            <ion-item-options side="end">
-              <!-- Botón para agregar etiqueta -->
-              <ion-item-option color="primary" (click)="addLabel(item)">
+          <ion-item *ngFor="let item of history" class="measurement-item">
+            <ion-label>
+              <h2>Medición {{ item.tramo }}</h2>
+              <p>Distancia: {{ item.distancia.toFixed(2) }} {{ unitOfMeasurement }}</p>
+              <p *ngIf="item.label">Etiqueta: {{ item.label }}</p>
+            </ion-label>
+            <ion-checkbox slot="end" *ngIf="isClearing" [(ngModel)]="selectedMap[item.tramo]"></ion-checkbox>
+            <div class="item-buttons" *ngIf="!isClearing">
+              <ion-button fill="clear" (click)="addLabel(item)">
                 <ion-icon slot="icon-only" name="pricetag-outline"></ion-icon>
-              </ion-item-option>
-              <!-- Botón para visualizar la medición -->
-              <ion-item-option color="tertiary" (click)="viewMeasurement(item)">
+              </ion-button>
+              <ion-button fill="clear" (click)="viewMeasurement(item)">
                 <ion-icon slot="icon-only" name="eye-outline"></ion-icon>
-              </ion-item-option>
-      
-            </ion-item-options>
-          </ion-item-sliding>
+              </ion-button>
+            </div>
+          </ion-item>
         </ion-list>
       </ion-card-content>
     </ion-card>
@@ -65,3 +60,4 @@
     </div>
   </div>
 </ion-content>
+

@@ -3,14 +3,52 @@
     <ion-title>Vista de Medición</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="dismiss()">
-        <ion-icon name="close"></ion-icon>
+        <ion-icon name="close-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <div class="dialog-container">
-    <div #konvaContainer class="konva-container"></div>
+  <!-- Details Container -->
+  <div class="details-container">
+    <div class="details-card">
+      <h2 class="medicion-title">Medición {{ tramo }}</h2>
+      <h4 *ngIf="label" class="medicion-subtitle">Etiqueta: {{ label }}</h4>
+    </div>
+  </div>
+
+  <!-- Canvas Card (contiene el Canvas Container) -->
+  <div class="canvas-card">
+    <h2 class="canvas-card-title">Vista Previa</h2>
+    
+    <div class="canvas-container">
+      <!-- Aquí se inyecta el Stage de Konva -->
+      <div #konvaContainer class="konva-container"></div>
+      
+      <!-- Controles de zoom (opcional) -->
+      <!--
+      <div class="zoom-controls">
+        <ion-button (click)="zoomIn()">
+          <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+        </ion-button>
+        <ion-button (click)="zoomOut()">
+          <ion-icon slot="icon-only" name="remove-outline"></ion-icon>
+        </ion-button>
+      </div>
+      <div class="image-size">{{ imageSize.width }} x {{ imageSize.height }} px</div>
+      -->
+    </div>
+  </div>
+
+  <!-- Results Panel -->
+  <div class="results-panel">
+    <div class="results-content">
+      <h3>Resultados</h3>
+      <p class="measurement">
+        <ion-icon name="analytics-outline"></ion-icon>
+        <span>Distancia: {{ distance }} {{ unitOfMeasurement }}</span>
+      </p>
+    </div>
   </div>
 </ion-content>

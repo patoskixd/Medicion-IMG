@@ -1,18 +1,23 @@
 import { Component, Input, ElementRef, ViewChild, OnInit } from '@angular/core';
 import Konva from 'konva';
-import { ModalController } from '@ionic/angular';
+import { ModalController, LoadingController } from '@ionic/angular';
 
 @Component({
   selector: 'app-measurement-dialog',
   templateUrl: './measurement-dialog.component.html',
-  styleUrls: ['./measurement-dialog.component.scss']
+  styleUrls: ['./measurement-dialog.component.scss'],
 })
 export class MeasurementDialogComponent implements OnInit {
   @Input() image: string = ''; // Ruta de la imagen
   @Input() marker1!: { x: number; y: number }; // Coordenadas del marcador 1
   @Input() marker2!: { x: number; y: number }; // Coordenadas del marcador 2
+  @Input() distance!: number; // Distancia calculada
+  @Input() unitOfMeasurement: string = ''; // Unidad de medida
+  @Input() tramo!: number; // Número de medición
+  @Input() label?: string; // Etiqueta opcional
 
-  @ViewChild('konvaContainer', { static: true }) konvaContainer!: ElementRef<HTMLDivElement>;
+  @ViewChild('konvaContainer', { static: true })
+  konvaContainer!: ElementRef<HTMLDivElement>;
 
   private stage!: Konva.Stage;
   private imageLayer!: Konva.Layer;
@@ -23,17 +28,32 @@ export class MeasurementDialogComponent implements OnInit {
 
   private scaleFactor = 1; // Factor de escala para ajustar la imagen al contenedor
 
-  constructor(private modalController: ModalController) {}
+  // Desplazamiento para centrar la imagen y los marcadores
+  private offsetX = 0;
+  private offsetY = 0;
 
-  ngOnInit() {
-    console.log('Ruta de la imagen:', this.image);
+  constructor(
+    private modalController: ModalController,
+    private loadingController: LoadingController
+  ) {}
 
-    // Configuración inicial para cargar la imagen
+  async ngOnInit() {
+    const loading = await this.loadingController.create({
+      message: 'Cargando imagen...',
+    });
+    await loading.present();
+
     this.imageObj.src = this.image;
-    this.imageObj.onload = () => {
+    this.imageObj.onload = async () => {
       this.initializeStage();
       this.addImageToStage();
       this.addMarkersAndLine();
+      await loading.dismiss();
+    };
+
+    this.imageObj.onerror = async () => {
+      await loading.dismiss();
+      console.error('Error al cargar la imagen.');
     };
   }
 
@@ -56,15 +76,24 @@ export class MeasurementDialogComponent implements OnInit {
   private addImageToStage() {
     const container = this.konvaContainer.nativeElement;
 
+    // Calculamos factores de escala en ancho y alto
     const scaleX = container.offsetWidth / this.imageObj.width;
     const scaleY = container.offsetHeight / this.imageObj.height;
 
+    // Tomamos el factor mínimo para no deformar la imagen
     this.scaleFactor = Math.min(scaleX, scaleY);
 
+    // IMPORTANTE: calcular offset para centrar la imagen escalada
+    const scaledWidth = this.imageObj.width * this.scaleFactor;
+    const scaledHeight = this.imageObj.height * this.scaleFactor;
+    this.offsetX = (container.offsetWidth - scaledWidth) / 2;
+    this.offsetY = (container.offsetHeight - scaledHeight) / 2;
+
+    // Creamos el Konva.Image en la posición centrada
     this.konvaImage = new Konva.Image({
       image: this.imageObj,
-      x: 0,
-      y: 0,
+      x: this.offsetX,
+      y: this.offsetY,
       scaleX: this.scaleFactor,
       scaleY: this.scaleFactor,
     });
@@ -74,21 +103,28 @@ export class MeasurementDialogComponent implements OnInit {
   }
 
   private addMarkersAndLine() {
-    // Agregar los marcadores
+    // Al dibujar marcadores, aplicamos el mismo offset para centrar.
     if (this.marker1) {
-      this.addMarker(this.marker1.x * this.scaleFactor, this.marker1.y * this.scaleFactor, 'red');
+      this.addMarker(
+        this.offsetX + this.marker1.x * this.scaleFactor,
+        this.offsetY + this.marker1.y * this.scaleFactor,
+        'red'
+      );
     }
     if (this.marker2) {
-      this.addMarker(this.marker2.x * this.scaleFactor, this.marker2.y * this.scaleFactor, 'blue');
+      this.addMarker(
+        this.offsetX + this.marker2.x * this.scaleFactor,
+        this.offsetY + this.marker2.y * this.scaleFactor,
+        'blue'
+      );
     }
 
-    // Dibujar y animar la línea entre los marcadores
     if (this.marker1 && this.marker2) {
       this.drawAndAnimateLine(
-        this.marker1.x * this.scaleFactor,
-        this.marker1.y * this.scaleFactor,
-        this.marker2.x * this.scaleFactor,
-        this.marker2.y * this.scaleFactor
+        this.offsetX + this.marker1.x * this.scaleFactor,
+        this.offsetY + this.marker1.y * this.scaleFactor,
+        this.offsetX + this.marker2.x * this.scaleFactor,
+        this.offsetY + this.marker2.y * this.scaleFactor
       );
     }
 
@@ -111,10 +147,10 @@ export class MeasurementDialogComponent implements OnInit {
   private drawAndAnimateLine(x1: number, y1: number, x2: number, y2: number) {
     this.line = new Konva.Line({
       points: [x1, y1, x2, y2],
-      stroke: '#2196F3', // Color de la línea
+      stroke: '#2196F3',
       strokeWidth: 3,
       lineCap: 'round',
-      dash: [10, 5], // Línea discontinua
+      dash: [10, 5],
       shadowColor: 'black',
       shadowBlur: 2,
       shadowOffset: { x: 1, y: 1 },
@@ -123,7 +159,6 @@ export class MeasurementDialogComponent implements OnInit {
 
     this.markerLayer.add(this.line);
 
-    // Crear animación para la línea
     const animation = new Konva.Animation((frame) => {
       if (!frame) return;
       const dashOffset = -frame.time / 50;
@@ -134,6 +169,6 @@ export class MeasurementDialogComponent implements OnInit {
   }
 
   dismiss() {
-    this.modalController.dismiss(); // Cierra el modal
+    this.modalController.dismiss();
   }
 }

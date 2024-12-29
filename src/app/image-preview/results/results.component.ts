@@ -1,8 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { ModalController, AlertController } from '@ionic/angular';
-import { Router } from '@angular/router';
 import { MeasurementDialogComponent } from '../measurement-dialog/measurement-dialog.component';
-
 
 @Component({
   selector: 'app-results',
@@ -10,13 +8,13 @@ import { MeasurementDialogComponent } from '../measurement-dialog/measurement-di
   styleUrls: ['./results.component.scss'],
 })
 export class ResultsComponent {
-  @Input() history: { tramo: number; distancia: number; label?: string; marker1: { x: number; y: number }; marker2: { x: number; y: number }, image:string; }[] = [];
+  @Input() history: { tramo: number; distancia: number; label?: string; marker1: { x: number; y: number }; marker2: { x: number; y: number }, image: string; }[] = [];
   @Input() unitOfMeasurement: string = '';
 
   selectedMap: { [key: number]: boolean } = {};
   isClearing: boolean = false;
 
-  constructor(private modalController: ModalController, private alertController: AlertController, private router: Router) {}
+  constructor(private modalController: ModalController, private alertController: AlertController) {}
 
   dismiss() {
     this.modalController.dismiss({
@@ -54,20 +52,29 @@ export class ResultsComponent {
   }
 
   async viewMeasurement(item: any) {
+    console.log('Datos enviados al modal:', {
+      image: item.image,
+      marker1: item.marker1,
+      marker2: item.marker2,
+      distancia: item.distancia,
+      label: item.label,
+      tramo: item.tramo,
+    });
+
     const modal = await this.modalController.create({
       component: MeasurementDialogComponent,
       componentProps: {
-        image: item.image, // Fuente de la imagen
-        marker1: item.marker1, // Coordenadas del marcador 1
-        marker2: item.marker2, // Coordenadas del marcador 2
+        image: item.image,
+        marker1: item.marker1,
+        marker2: item.marker2,
+        distance: item.distancia,
+        unitOfMeasurement: this.unitOfMeasurement,
+        tramo: item.tramo,
+        label: item.label,
       },
     });
     await modal.present();
   }
-  
-  
-  
-  
 
   toggleSelection(tramo: number) {
     this.selectedMap[tramo] = !this.selectedMap[tramo];
@@ -106,20 +113,37 @@ export class ResultsComponent {
 
   deleteSelected() {
     this.history = this.history.filter((item) => !this.selectedMap[item.tramo]);
-    this.selectedMap = {}; // Reiniciar el mapa de selección
+    this.selectedMap = {};
     this.history.forEach((item, index) => {
-      item.tramo = index + 1; // Reordenar tramos
+      item.tramo = index + 1;
     });
 
     if (this.history.length === 0) {
-      this.isClearing = false; // Salir del modo de limpieza si ya no hay elementos
+      this.isClearing = false;
     }
   }
 
-  clearAll() {
-    this.history = [];
-    this.selectedMap = {};
-    this.isClearing = false;
+  async clearAll() {
+    const alert = await this.alertController.create({
+      header: 'Confirmar eliminación',
+      message: '¿Estás seguro de que deseas eliminar todas las mediciones? Esta acción no se puede deshacer.',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Eliminar',
+          handler: () => {
+            this.history = [];
+            this.selectedMap = {};
+            this.isClearing = false;
+          },
+        },
+      ],
+    });
+
+    await alert.present();
   }
 
   enterClearingMode() {
@@ -131,3 +155,4 @@ export class ResultsComponent {
     this.selectedMap = {};
   }
 }
+

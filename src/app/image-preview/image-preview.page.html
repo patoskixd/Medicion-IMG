@@ -51,6 +51,7 @@
   <!-- Results Panel -->
   <div class="results-panel" *ngIf="measuredDistance !== null && unitsPerPixel !== null">
     <h3>Resultados</h3>
+    
     <p>Distancia medida: {{ (measuredDistance * unitsPerPixel).toFixed(2) }} {{ unitOfMeasurement }}</p>
   </div>
 

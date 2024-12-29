@@ -26,48 +26,39 @@ ion-card-title {
   font-weight: 700;
 }
 
-ion-card-subtitle {
-  font-size: 14px;
-  opacity: 0.8;
-}
-
 ion-list {
   background: transparent;
 }
 
-ion-item {
-  --padding-start: 0;
+.measurement-item {
+  --padding-start: 16px;
+  --padding-end: 16px;
   --inner-padding-end: 0;
-  --background: transparent;
-  border-bottom: 1px solid var(--ion-color-light-shade);
-
-  &:last-child {
-    border-bottom: none;
-  }
-}
-
-ion-item-sliding {
-  background: var(--ion-color-light);
+  --background: var(--ion-color-light);
   border-radius: 8px;
   margin-bottom: 8px;
-  overflow: hidden;
-}
 
-ion-item-option {
-  --padding-top: 0;
-  --padding-bottom: 0;
-}
+  ion-label {
+    h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--ion-color-dark);
+    }
 
-ion-label {
-  h2 {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--ion-color-dark);
+    p {
+      font-size: 14px;
+      color: var(--ion-color-medium);
+    }
   }
 
-  p {
-    font-size: 14px;
-    color: var(--ion-color-medium);
+  .item-buttons {
+    display: flex;
+    align-items: center;
+
+    ion-button {
+      --padding-start: 8px;
+      --padding-end: 8px;
+    }
   }
 }
 
@@ -104,8 +95,8 @@ ion-button {
 ion-header {
   ion-toolbar {
     ion-title {
-      text-align: center; /* Centrar el título */
-      white-space: normal; /* Permite ajustar a varias líneas si es necesario */
+      text-align: center;
+      white-space: normal;
       overflow: hidden;
       text-overflow: ellipsis;
     }
@@ -118,3 +109,4 @@ ion-header {
     }
   }
 }
+

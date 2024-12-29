@@ -650,7 +650,7 @@ async openResultsDialog() {
         image:this.imageObj.src,
       });
   
-      this.showGreenAlert(`Medición guardada. Distancia: ${distance} ${this.unitOfMeasurement}`);
+      this.showGreenAlert(`Medición guardada`);
     } else {
       this.showAlert('Por favor, complete la calibración y marque los puntos antes de guardar.');
     }
