@@ -1,5 +1,8 @@
 <ion-header>
   <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-img src="assets/images/Logo_UCT.png" alt="Logo UCT" class="uct-logo"></ion-img>
+    </ion-buttons>
     <ion-title>Vista de Medición</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="dismiss()">
@@ -25,19 +28,7 @@
     <div class="canvas-container">
       <!-- Aquí se inyecta el Stage de Konva -->
       <div #konvaContainer class="konva-container"></div>
-      
-      <!-- Controles de zoom (opcional) -->
-      <!--
-      <div class="zoom-controls">
-        <ion-button (click)="zoomIn()">
-          <ion-icon slot="icon-only" name="add-outline"></ion-icon>
-        </ion-button>
-        <ion-button (click)="zoomOut()">
-          <ion-icon slot="icon-only" name="remove-outline"></ion-icon>
-        </ion-button>
-      </div>
-      <div class="image-size">{{ imageSize.width }} x {{ imageSize.height }} px</div>
-      -->
+    
     </div>
   </div>
 

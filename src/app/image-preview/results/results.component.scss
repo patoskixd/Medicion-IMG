@@ -109,4 +109,15 @@ ion-header {
     }
   }
 }
+ion-header {
+  ion-toolbar {
+    display: flex;
+    align-items: center;
 
+    .uct-logo {
+      width: 40px; /* Ajusta el tamaño del logo */
+      height: auto;
+      margin-left: 10px;
+    }
+  }
+}

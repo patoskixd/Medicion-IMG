@@ -11,10 +11,10 @@ import { AppComponent } from './app.component';
 import { MeasurementDialogComponent } from './image-preview/measurement-dialog/measurement-dialog.component';
 
 
+
 @NgModule({
   declarations: [AppComponent, CalibrationFormComponent,ResultsComponent,MeasurementDialogComponent],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, FormsModule, IonicModule, CommonModule ],
-  
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA], 
