@@ -321,14 +321,15 @@ private resizeStage() {
   setMarker(marker: 'marker1' | 'marker2') {
     this.isLocked = true;
     this.konvaImage.draggable(false);
+    
     this.stage.on('click touchstart', async (e) => {
       const pointer = this.stage.getPointerPosition();
       if (!pointer) return;
-
+  
       // Convertir las coordenadas del clic al sistema de la imagen original
       const transform = this.konvaImage.getAbsoluteTransform().copy().invert();
       const imageCoords = transform.point(pointer);
-
+  
       // Validar si el clic está dentro de los límites de la imagen
       if (
         imageCoords.x >= 0 &&
@@ -336,10 +337,11 @@ private resizeStage() {
         imageCoords.x <= this.imageObj.width &&
         imageCoords.y <= this.imageObj.height
       ) {
+        // Usar las coordenadas transformadas para añadir el marcador
         this.addMarker(imageCoords.x, imageCoords.y, marker === 'marker1' ? 'red' : 'blue', marker);
         console.log(`Marcador ${marker} colocado en: x=${imageCoords.x}, y=${imageCoords.y}`);
       }
-
+  
       this.stage.off('click touchstart');
     });
   }
@@ -631,23 +633,28 @@ async openResultsDialog() {
     if (this.markers.marker1 && this.markers.marker2 && this.measuredDistance !== null && this.unitsPerPixel !== null) {
       const distance = (this.measuredDistance * this.unitsPerPixel).toFixed(2);
   
-      const marker1Pos = {
-        x: this.markers.marker1!.x() / this.konvaImage.scaleX(),
-        y: this.markers.marker1!.y() / this.konvaImage.scaleY(),
-      };
+      // Obtener las coordenadas relativas a la imagen original
+      const transform = this.konvaImage.getAbsoluteTransform().copy().invert();
+      
+      const marker1Absolute = this.markers.marker1!.getAbsolutePosition();
+      const marker2Absolute = this.markers.marker2!.getAbsolutePosition();
+      
+      const marker1Pos = transform.point(marker1Absolute);
+      const marker2Pos = transform.point(marker2Absolute);
   
-      const marker2Pos = {
-        x: this.markers.marker2!.x() / this.konvaImage.scaleX(),
-        y: this.markers.marker2!.y() / this.konvaImage.scaleY(),
-      };
-  
-      // Guardar en el historial
+      // Guardar en el historial con las coordenadas originales
       this.history.push({
         tramo: this.tramoCounter++,
         distancia: +distance,
-        marker1: marker1Pos,
-        marker2: marker2Pos,
-        image:this.imageObj.src,
+        marker1: {
+          x: marker1Pos.x,
+          y: marker1Pos.y
+        },
+        marker2: {
+          x: marker2Pos.x,
+          y: marker2Pos.y
+        },
+        image: this.imageObj.src,
       });
   
       this.showGreenAlert(`Medición guardada`);
@@ -660,9 +667,5 @@ async openResultsDialog() {
     return this.unitsPerPixel !== null;
   }
 
-  
-  
-  
-  
   
 }

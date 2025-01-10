@@ -1,3 +1,4 @@
+
 import { Component, Input, ElementRef, ViewChild, OnInit } from '@angular/core';
 import Konva from 'konva';
 import { ModalController, LoadingController } from '@ionic/angular';
@@ -103,31 +104,44 @@ export class MeasurementDialogComponent implements OnInit {
   }
 
   private addMarkersAndLine() {
-    // Al dibujar marcadores, aplicamos el mismo offset para centrar.
+    const container = this.konvaContainer.nativeElement;
+    
+    // Calculamos factores de escala en ancho y alto
+    const scaleX = container.offsetWidth / this.imageObj.width;
+    const scaleY = container.offsetHeight / this.imageObj.height;
+    
+    // Tomamos el factor mínimo para no deformar la imagen
+    this.scaleFactor = Math.min(scaleX, scaleY);
+    
+    // Calculamos offset para centrar la imagen
+    const scaledWidth = this.imageObj.width * this.scaleFactor;
+    const scaledHeight = this.imageObj.height * this.scaleFactor;
+    this.offsetX = (container.offsetWidth - scaledWidth) / 2;
+    this.offsetY = (container.offsetHeight - scaledHeight) / 2;
+  
+    // Añadimos los marcadores usando las coordenadas originales
     if (this.marker1) {
-      this.addMarker(
-        this.offsetX + this.marker1.x * this.scaleFactor,
-        this.offsetY + this.marker1.y * this.scaleFactor,
-        'red'
-      );
+      const x1 = this.offsetX + (this.marker1.x * this.scaleFactor);
+      const y1 = this.offsetY + (this.marker1.y * this.scaleFactor);
+      this.addMarker(x1, y1, 'red');
     }
+    
     if (this.marker2) {
-      this.addMarker(
-        this.offsetX + this.marker2.x * this.scaleFactor,
-        this.offsetY + this.marker2.y * this.scaleFactor,
-        'blue'
-      );
+      const x2 = this.offsetX + (this.marker2.x * this.scaleFactor);
+      const y2 = this.offsetY + (this.marker2.y * this.scaleFactor);
+      this.addMarker(x2, y2, 'blue');
     }
-
+  
+    // Dibujamos la línea si tenemos ambos marcadores
     if (this.marker1 && this.marker2) {
-      this.drawAndAnimateLine(
-        this.offsetX + this.marker1.x * this.scaleFactor,
-        this.offsetY + this.marker1.y * this.scaleFactor,
-        this.offsetX + this.marker2.x * this.scaleFactor,
-        this.offsetY + this.marker2.y * this.scaleFactor
-      );
+      const x1 = this.offsetX + (this.marker1.x * this.scaleFactor);
+      const y1 = this.offsetY + (this.marker1.y * this.scaleFactor);
+      const x2 = this.offsetX + (this.marker2.x * this.scaleFactor);
+      const y2 = this.offsetY + (this.marker2.y * this.scaleFactor);
+      
+      this.drawAndAnimateLine(x1, y1, x2, y2);
     }
-
+  
     this.markerLayer.draw();
   }
 
